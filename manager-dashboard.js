@@ -22,6 +22,7 @@
 "use strict";
 
 const DalimgariManagerDashboard = (() => {
+
   /* =========================================================
      CONFIG
   ========================================================= */
@@ -46,6 +47,7 @@ const DalimgariManagerDashboard = (() => {
 
     ready: false,
     saving: false,
+    logoutInProgress: false,
 
     dirty: {
       village: false,
@@ -97,28 +99,67 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   async function logError(error, context) {
-    try {
-      const dataLayer = getDataLayer();
 
-      if (dataLayer && typeof dataLayer.logError === "function") {
-        await dataLayer.logError(error, context);
+    try {
+
+      const dataLayer =
+        getDataLayer();
+
+      if (
+        dataLayer &&
+        typeof dataLayer.logError ===
+          "function"
+      ) {
+
+        await dataLayer.logError(
+          error,
+          context
+        );
       }
+
     } catch (loggingError) {
-      console.error(loggingError);
+
+      console.error(
+        "Manager error logging failed:",
+        loggingError
+      );
     }
 
-    console.error(`[${context}]`, error);
+    console.error(
+      `[${context}]`,
+      error
+    );
   }
 
-  async function logActivity(action, details = {}) {
-    try {
-      const dataLayer = getDataLayer();
 
-      if (dataLayer && typeof dataLayer.logActivity === "function") {
-        await dataLayer.logActivity(action, details);
+  async function logActivity(
+    action,
+    details = {}
+  ) {
+
+    try {
+
+      const dataLayer =
+        getDataLayer();
+
+      if (
+        dataLayer &&
+        typeof dataLayer.logActivity ===
+          "function"
+      ) {
+
+        await dataLayer.logActivity(
+          action,
+          details
+        );
       }
+
     } catch (error) {
-      console.error(error);
+
+      console.error(
+        "Manager activity logging failed:",
+        error
+      );
     }
   }
 
@@ -128,41 +169,88 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function getCurrentUser() {
+
     try {
-      const raw = sessionStorage.getItem("dalimgariUser");
+
+      const raw =
+        sessionStorage.getItem(
+          "dalimgariUser"
+        );
 
       if (!raw) {
         return null;
       }
 
-      const user = JSON.parse(raw);
+      const user =
+        JSON.parse(raw);
 
-      if (!user || typeof user !== "object") {
+      if (
+        !user ||
+        typeof user !== "object"
+      ) {
         return null;
       }
 
       return user;
+
     } catch (error) {
-      logError(error, "manager.getCurrentUser");
+
+      console.error(
+        "manager.getCurrentUser failed:",
+        error
+      );
+
       return null;
     }
   }
 
+
+  function clearLocalSession() {
+
+    try {
+
+      sessionStorage.removeItem(
+        "dalimgariUser"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Manager session remove failed:",
+        error
+      );
+
+    } finally {
+
+      state.currentUser = null;
+    }
+  }
+
+
   function checkManagerLogin() {
-    const user = getCurrentUser();
 
-    if (!user || user.role !== "manager") {
-      try {
-        sessionStorage.removeItem("dalimgariUser");
-      } catch (error) {
-        console.error(error);
-      }
+    const user =
+      getCurrentUser();
 
-      window.location.replace("login.html");
+
+    if (
+      !user ||
+      user.role !== "manager"
+    ) {
+
+      clearLocalSession();
+
+      window.location.replace(
+        "login.html"
+      );
+
       return false;
     }
 
-    state.currentUser = user;
+
+    state.currentUser =
+      user;
+
 
     return true;
   }
@@ -176,23 +264,36 @@ const DalimgariManagerDashboard = (() => {
     return state.settingsData?.permissions || {};
   }
 
-  function hasPermission(permission) {
-    if (!checkManagerLogin()) {
+
+  function hasPermission(
+    permission
+  ) {
+
+    if (
+      !checkManagerLogin()
+    ) {
       return false;
     }
 
-    const permissions = getPermissions();
+    const permissions =
+      getPermissions();
 
     return permissions[permission] === true;
   }
 
-  function requirePermission(permission) {
-    if (hasPermission(permission)) {
+
+  function requirePermission(
+    permission
+  ) {
+
+    if (
+      hasPermission(permission)
+    ) {
       return true;
     }
 
     showErrorMessage(
-      "এই কাজটি করার জন্য আপনার অনুমতি নেই।",
+      "এই কাজটি করার জন্য আপনার অনুমতি নেই।"
     );
 
     return false;
@@ -203,28 +304,57 @@ const DalimgariManagerDashboard = (() => {
      UI
   ========================================================= */
 
-  function setDashboardLoading(loading) {
-    state.saving = Boolean(loading);
+  function setDashboardLoading(
+    loading
+  ) {
+
+    state.saving =
+      Boolean(loading);
+
 
     document.body.classList.toggle(
       "dashboard-loading",
-      state.saving,
+      state.saving
     );
 
-    document.querySelectorAll("button").forEach((button) => {
-      if (button.dataset.lockDuringLoading === "false") {
-        return;
-      }
 
-      button.disabled = state.saving;
-    });
+    document
+      .querySelectorAll("button")
+      .forEach((button) => {
+
+        /*
+         * Logout button can remain enabled
+         * during loading/saving.
+         */
+
+        if (
+          button.dataset
+            .lockDuringLoading ===
+          "false"
+        ) {
+          return;
+        }
+
+        button.disabled =
+          state.saving;
+      });
   }
 
-  function showErrorMessage(message) {
-    alert(`সমস্যা হয়েছে:\n\n${message}`);
+
+  function showErrorMessage(
+    message
+  ) {
+
+    alert(
+      `সমস্যা হয়েছে:\n\n${message}`
+    );
   }
 
-  function showSuccessMessage(message) {
+
+  function showSuccessMessage(
+    message
+  ) {
+
     alert(message);
   }
 
@@ -233,72 +363,157 @@ const DalimgariManagerDashboard = (() => {
      DIRTY STATE
   ========================================================= */
 
-  function setDirty(section, value = true) {
-    if (!(section in state.dirty)) {
+  function setDirty(
+    section,
+    value = true
+  ) {
+
+    if (
+      !(section in state.dirty)
+    ) {
       return;
     }
 
-    state.dirty[section] = Boolean(value);
+    state.dirty[section] =
+      Boolean(value);
 
-    const tab = document.querySelector(
-      `.admin-nav-link[data-tab="${section}"]`,
-    );
+
+    const tab =
+      document.querySelector(
+        `.admin-nav-link[data-tab="${section}"]`
+      );
+
 
     if (tab) {
+
       tab.classList.toggle(
         "has-unsaved-changes",
-        state.dirty[section],
+        state.dirty[section]
       );
     }
   }
 
-  function isDirty(section = null) {
+
+  function isDirty(
+    section = null
+  ) {
+
     if (section) {
-      return Boolean(state.dirty[section]);
+
+      return Boolean(
+        state.dirty[section]
+      );
     }
 
-    return Object.values(state.dirty).some(Boolean);
+
+    return Object.values(
+      state.dirty
+    ).some(Boolean);
   }
 
-  window.addEventListener("beforeunload", (event) => {
-    if (!isDirty()) {
-      return;
-    }
 
-    event.preventDefault();
-    event.returnValue = "";
-  });
+  function clearAllDirtyState() {
+
+    Object.keys(
+      state.dirty
+    ).forEach((section) => {
+
+      state.dirty[section] =
+        false;
+
+
+      const tab =
+        document.querySelector(
+          `.admin-nav-link[data-tab="${section}"]`
+        );
+
+
+      if (tab) {
+
+        tab.classList.remove(
+          "has-unsaved-changes"
+        );
+
+        tab.removeAttribute(
+          "data-unsaved"
+        );
+      }
+    });
+  }
+
+
+  window.addEventListener(
+    "beforeunload",
+    (event) => {
+
+      if (!isDirty()) {
+        return;
+      }
+
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  );
 
 
   /* =========================================================
      INPUT HELPERS
   ========================================================= */
 
-  function getInputValue(id) {
-    const element = $(id);
+  function getInputValue(
+    id
+  ) {
 
-    return element ? trim(element.value) : "";
+    const element =
+      $(id);
+
+    return element
+      ? trim(element.value)
+      : "";
   }
 
-  function setInputValue(id, value) {
-    const element = $(id);
+
+  function setInputValue(
+    id,
+    value
+  ) {
+
+    const element =
+      $(id);
 
     if (element) {
-      element.value = safeString(value);
+
+      element.value =
+        safeString(value);
     }
   }
 
-  function getCheckbox(id) {
-    const element = $(id);
 
-    return element ? Boolean(element.checked) : false;
+  function getCheckbox(
+    id
+  ) {
+
+    const element =
+      $(id);
+
+    return element
+      ? Boolean(element.checked)
+      : false;
   }
 
-  function setCheckbox(id, value) {
-    const element = $(id);
+
+  function setCheckbox(
+    id,
+    value
+  ) {
+
+    const element =
+      $(id);
 
     if (element) {
-      element.checked = Boolean(value);
+
+      element.checked =
+        Boolean(value);
     }
   }
 
@@ -308,78 +523,162 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function getTabFromHash() {
-    const hash = window.location.hash
-      .replace("#", "")
-      .trim();
 
-    return ALLOWED_TABS.includes(hash)
+    const hash =
+      window.location.hash
+        .replace("#", "")
+        .trim();
+
+
+    return ALLOWED_TABS.includes(
+      hash
+    )
       ? hash
       : DEFAULT_TAB;
   }
 
-  function showTab(tabName, updateHash = true) {
-    const tab = ALLOWED_TABS.includes(tabName)
-      ? tabName
-      : DEFAULT_TAB;
 
-    state.activeTab = tab;
+  function showTab(
+    tabName,
+    updateHash = true
+  ) {
 
-    document.querySelectorAll(".admin-nav-link").forEach((link) => {
-      const active = link.dataset.tab === tab;
+    const tab =
+      ALLOWED_TABS.includes(
+        tabName
+      )
+        ? tabName
+        : DEFAULT_TAB;
 
-      link.classList.toggle("active", active);
 
-      if (active) {
-        link.setAttribute("aria-current", "page");
-      } else {
-        link.removeAttribute("aria-current");
-      }
-    });
+    state.activeTab =
+      tab;
+
 
     document
-      .querySelectorAll(".dashboard-tab-content")
-      .forEach((section) => {
-        section.classList.remove("active");
+      .querySelectorAll(
+        ".admin-nav-link"
+      )
+      .forEach((link) => {
+
+        const active =
+          link.dataset.tab ===
+          tab;
+
+
+        link.classList.toggle(
+          "active",
+          active
+        );
+
+
+        if (active) {
+
+          link.setAttribute(
+            "aria-current",
+            "page"
+          );
+
+        } else {
+
+          link.removeAttribute(
+            "aria-current"
+          );
+        }
       });
 
-    const target = $(`${tab}Tab`);
+
+    document
+      .querySelectorAll(
+        ".dashboard-tab-content"
+      )
+      .forEach(
+        (section) => {
+
+          section.classList.remove(
+            "active"
+          );
+        }
+      );
+
+
+    const target =
+      $(`${tab}Tab`);
+
 
     if (target) {
-      target.classList.add("active");
+
+      target.classList.add(
+        "active"
+      );
     }
+
 
     if (
       updateHash &&
-      window.location.hash !== `#${tab}`
+      window.location.hash !==
+        `#${tab}`
     ) {
+
       history.replaceState(
         null,
         "",
-        `#${tab}`,
+        `#${tab}`
       );
     }
   }
 
+
   function setupTabs() {
-    document.querySelectorAll(".admin-nav-link").forEach((link) => {
-      link.addEventListener("click", (event) => {
-        event.preventDefault();
 
-        const tab = link.dataset.tab;
+    document
+      .querySelectorAll(
+        ".admin-nav-link"
+      )
+      .forEach((link) => {
 
-        if (!ALLOWED_TABS.includes(tab)) {
-          return;
-        }
+        link.addEventListener(
+          "click",
+          (event) => {
 
-        showTab(tab);
+            event.preventDefault();
+
+
+            const tab =
+              link.dataset.tab;
+
+
+            if (
+              !ALLOWED_TABS.includes(
+                tab
+              )
+            ) {
+              return;
+            }
+
+
+            showTab(tab);
+          }
+        );
       });
-    });
 
-    window.addEventListener("hashchange", () => {
-      showTab(getTabFromHash(), false);
-    });
 
-    showTab(getTabFromHash(), false);
+    window.addEventListener(
+      "hashchange",
+      () => {
+
+        showTab(
+          getTabFromHash(),
+          false
+        );
+      }
+    );
+
+
+    showTab(
+      getTabFromHash(),
+      false
+    );
   }
 
 
@@ -388,38 +687,87 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function loadVillageInformation() {
-    const data = state.siteData || {};
 
-    setInputValue("villageName", data.villageName);
+    const data =
+      state.siteData || {};
+
+
+    setInputValue(
+      "villageName",
+      data.villageName
+    );
+
+
     setInputValue(
       "villageDescription",
-      data.villageDescription,
+      data.villageDescription
     );
+
+
     setInputValue(
       "detailedDescription",
-      data.detailedDescription,
+      data.detailedDescription
     );
-    setInputValue("location", data.location);
-    setInputValue("history", data.history);
-    setInputValue("nature", data.nature);
+
+
+    setInputValue(
+      "location",
+      data.location
+    );
+
+
+    setInputValue(
+      "history",
+      data.history
+    );
+
+
+    setInputValue(
+      "nature",
+      data.nature
+    );
   }
 
+
   function villageSnapshot() {
+
     return JSON.stringify({
-      villageName: getInputValue("villageName"),
-      villageDescription: getInputValue(
-        "villageDescription",
-      ),
-      detailedDescription: getInputValue(
-        "detailedDescription",
-      ),
-      location: getInputValue("location"),
-      history: getInputValue("history"),
-      nature: getInputValue("nature"),
+
+      villageName:
+        getInputValue(
+          "villageName"
+        ),
+
+      villageDescription:
+        getInputValue(
+          "villageDescription"
+        ),
+
+      detailedDescription:
+        getInputValue(
+          "detailedDescription"
+        ),
+
+      location:
+        getInputValue(
+          "location"
+        ),
+
+      history:
+        getInputValue(
+          "history"
+        ),
+
+      nature:
+        getInputValue(
+          "nature"
+        ),
     });
   }
 
+
   function setupVillageDirtyTracking() {
+
     [
       "villageName",
       "villageDescription",
@@ -428,89 +776,155 @@ const DalimgariManagerDashboard = (() => {
       "history",
       "nature",
     ].forEach((id) => {
-      const element = $(id);
+
+      const element =
+        $(id);
+
 
       if (!element) {
         return;
       }
 
-      element.addEventListener("input", () => {
-        setDirty(
-          "village",
-          villageSnapshot() !==
-            state.snapshots.village,
-        );
-      });
 
-      element.addEventListener("change", () => {
-        setDirty(
-          "village",
-          villageSnapshot() !==
-            state.snapshots.village,
-        );
-      });
+      element.addEventListener(
+        "input",
+        () => {
+
+          setDirty(
+            "village",
+            villageSnapshot() !==
+              state.snapshots.village
+          );
+        }
+      );
+
+
+      element.addEventListener(
+        "change",
+        () => {
+
+          setDirty(
+            "village",
+            villageSnapshot() !==
+              state.snapshots.village
+          );
+        }
+      );
     });
   }
 
+
   async function saveVillageInformation() {
-    if (!requirePermission("managerCanEditVillageInfo")) {
+
+    if (
+      !requirePermission(
+        "managerCanEditVillageInfo"
+      )
+    ) {
       return;
     }
+
 
     if (state.saving) {
       return;
     }
 
+
     const updatedData = {
+
       ...state.siteData,
 
-      villageName: getInputValue("villageName"),
+      villageName:
+        getInputValue(
+          "villageName"
+        ),
 
       villageDescription:
-        getInputValue("villageDescription"),
+        getInputValue(
+          "villageDescription"
+        ),
 
       detailedDescription:
-        getInputValue("detailedDescription"),
+        getInputValue(
+          "detailedDescription"
+        ),
 
-      location: getInputValue("location"),
+      location:
+        getInputValue(
+          "location"
+        ),
 
-      history: getInputValue("history"),
+      history:
+        getInputValue(
+          "history"
+        ),
 
-      nature: getInputValue("nature"),
+      nature:
+        getInputValue(
+          "nature"
+        ),
     };
 
-    if (!updatedData.villageName) {
+
+    if (
+      !updatedData.villageName
+    ) {
+
       showErrorMessage(
-        "Village Name খালি রাখা যাবে না।",
+        "Village Name খালি রাখা যাবে না।"
       );
+
       return;
     }
 
-    setDashboardLoading(true);
+
+    setDashboardLoading(
+      true
+    );
+
 
     try {
-      if (typeof window.saveSiteData !== "function") {
+
+      if (
+        typeof window.saveSiteData !==
+        "function"
+      ) {
+
         throw new Error(
-          "saveSiteData function পাওয়া যায়নি।",
+          "saveSiteData function পাওয়া যায়নি।"
         );
       }
 
-      const result = await window.saveSiteData(
-        updatedData,
-      );
 
-      if (result === false) {
+      const result =
+        await window.saveSiteData(
+          updatedData
+        );
+
+
+      if (
+        result === false
+      ) {
+
         throw new Error(
-          "Village Information সংরক্ষণ করা যায়নি।",
+          "Village Information সংরক্ষণ করা যায়নি।"
         );
       }
 
-      state.siteData = updatedData;
+
+      state.siteData =
+        updatedData;
+
 
       state.snapshots.village =
         villageSnapshot();
 
-      setDirty("village", false);
+
+      setDirty(
+        "village",
+        false
+      );
+
 
       await logActivity(
         "manager_village_information_saved",
@@ -518,23 +932,31 @@ const DalimgariManagerDashboard = (() => {
           user:
             state.currentUser?.username ||
             "manager",
-        },
+        }
       );
+
 
       showSuccessMessage(
-        "Village Information সফলভাবে সংরক্ষণ হয়েছে।",
-      );
-    } catch (error) {
-      await logError(
-        error,
-        "saveVillageInformation",
+        "Village Information সফলভাবে সংরক্ষণ হয়েছে।"
       );
 
-      showErrorMessage(
-        "Village Information সংরক্ষণ করা যায়নি।",
+    } catch (error) {
+
+      await logError(
+        error,
+        "saveVillageInformation"
       );
+
+
+      showErrorMessage(
+        "Village Information সংরক্ষণ করা যায়নি।"
+      );
+
     } finally {
-      setDashboardLoading(false);
+
+      setDashboardLoading(
+        false
+      );
     }
   }
 
@@ -543,34 +965,56 @@ const DalimgariManagerDashboard = (() => {
      GENERIC LOCAL DATA COLLECTION
   ========================================================= */
 
-  function getCollection(name) {
-    const collection = state.siteData?.[name];
+  function getCollection(
+    name
+  ) {
 
-    return Array.isArray(collection)
+    const collection =
+      state.siteData?.[name];
+
+
+    return Array.isArray(
+      collection
+    )
       ? collection
       : [];
   }
 
-  function createID(prefix) {
+
+  function createID(
+    prefix
+  ) {
+
     if (
       window.DalimgariDataLayer &&
       typeof window.DalimgariDataLayer.generateId ===
         "function"
     ) {
+
       return window.DalimgariDataLayer.generateId(
-        prefix,
+        prefix
       );
     }
+
 
     return `${prefix}_${Date.now()}_${Math.random()
       .toString(36)
       .slice(2, 8)}`;
   }
 
-  function saveCollectionToState(name, items) {
-    state.siteData[name] = Array.isArray(items)
-      ? items.slice(0, MAX_ITEMS)
-      : [];
+
+  function saveCollectionToState(
+    name,
+    items
+  ) {
+
+    state.siteData[name] =
+      Array.isArray(items)
+        ? items.slice(
+            0,
+            MAX_ITEMS
+          )
+        : [];
   }
 
 
@@ -579,71 +1023,154 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function renderPeople() {
-    const container = $("peopleList");
+
+    const container =
+      $("peopleList");
+
 
     if (!container) {
       return;
     }
 
-    container.innerHTML = "";
 
-    const people = getCollection("people");
+    container.innerHTML =
+      "";
+
+
+    const people =
+      getCollection(
+        "people"
+      );
+
 
     if (!people.length) {
-      const empty = document.createElement("p");
 
-      empty.className = "empty-state";
+      const empty =
+        document.createElement(
+          "p"
+        );
+
+
+      empty.className =
+        "empty-state";
+
+
       empty.textContent =
         "কোনো তথ্য যোগ করা হয়নি।";
 
-      container.appendChild(empty);
-      return;
-    }
 
-    people.forEach((person, index) => {
-      const item = createManagementItem(
-        person.name || "নাম নেই",
-        person.description || "",
-        person.photo || "",
-        () => removeCollectionItem(
-          "people",
-          index,
-          "people",
-        ),
+      container.appendChild(
+        empty
       );
 
-      container.appendChild(item);
-    });
+
+      return;
+    }
+
+
+    people.forEach(
+      (person, index) => {
+
+        const item =
+          createManagementItem(
+
+            person.name ||
+              "নাম নেই",
+
+            person.description ||
+              "",
+
+            person.photo ||
+              "",
+
+            () =>
+              removeCollectionItem(
+                "people",
+                index,
+                "people"
+              ),
+          );
+
+
+        container.appendChild(
+          item
+        );
+      }
+    );
   }
 
+
   async function addPerson() {
-    if (!requirePermission("managerCanManagePeople")) {
+
+    if (
+      !requirePermission(
+        "managerCanManagePeople"
+      )
+    ) {
       return;
     }
 
-    const name = getInputValue("personName");
-    const description = getInputValue(
-      "personDescription",
-    );
-    const photo = getInputValue("personPhoto");
+
+    const name =
+      getInputValue(
+        "personName"
+      );
+
+
+    const description =
+      getInputValue(
+        "personDescription"
+      );
+
+
+    const photo =
+      getInputValue(
+        "personPhoto"
+      );
+
 
     if (!name) {
-      showErrorMessage("ব্যক্তির নাম দিন।");
+
+      showErrorMessage(
+        "ব্যক্তির নাম দিন।"
+      );
+
       return;
     }
 
-    const people = getCollection("people");
+
+    const people =
+      getCollection(
+        "people"
+      );
+
 
     people.push({
-      id: createID("person"),
+
+      id:
+        createID(
+          "person"
+        ),
+
       name,
+
       description,
+
       photo,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+
+      createdAt:
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString(),
     });
 
-    saveCollectionToState("people", people);
+
+    saveCollectionToState(
+      "people",
+      people
+    );
+
 
     clearFields([
       "personName",
@@ -651,9 +1178,14 @@ const DalimgariManagerDashboard = (() => {
       "personPhoto",
     ]);
 
+
     renderPeople();
 
-    setDirty("people", true);
+
+    setDirty(
+      "people",
+      true
+    );
   }
 
 
@@ -662,48 +1194,98 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function renderImages() {
+
     renderGenericCollection(
       "imageList",
       "images",
       "title",
       "description",
-      "path",
+      "path"
     );
   }
 
+
   async function addImage() {
-    if (!requirePermission("managerCanManageImages")) {
+
+    if (
+      !requirePermission(
+        "managerCanManageImages"
+      )
+    ) {
       return;
     }
 
-    const title = getInputValue("imageTitle");
-    const description = getInputValue(
-      "imageDescription",
-    );
-    const path = getInputValue("imagePath");
+
+    const title =
+      getInputValue(
+        "imageTitle"
+      );
+
+
+    const description =
+      getInputValue(
+        "imageDescription"
+      );
+
+
+    const path =
+      getInputValue(
+        "imagePath"
+      );
+
 
     if (!title) {
-      showErrorMessage("ছবির নাম দিন।");
+
+      showErrorMessage(
+        "ছবির নাম দিন।"
+      );
+
       return;
     }
+
 
     if (!path) {
-      showErrorMessage("Image Path দিন।");
+
+      showErrorMessage(
+        "Image Path দিন।"
+      );
+
       return;
     }
 
-    const images = getCollection("images");
+
+    const images =
+      getCollection(
+        "images"
+      );
+
 
     images.push({
-      id: createID("image"),
+
+      id:
+        createID(
+          "image"
+        ),
+
       title,
+
       description,
+
       path,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+
+      createdAt:
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString(),
     });
 
-    saveCollectionToState("images", images);
+
+    saveCollectionToState(
+      "images",
+      images
+    );
+
 
     clearFields([
       "imageTitle",
@@ -711,9 +1293,14 @@ const DalimgariManagerDashboard = (() => {
       "imagePath",
     ]);
 
+
     renderImages();
 
-    setDirty("images", true);
+
+    setDirty(
+      "images",
+      true
+    );
   }
 
 
@@ -722,48 +1309,98 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function renderVideos() {
+
     renderGenericCollection(
       "videoList",
       "videos",
       "title",
       "description",
-      "path",
+      "path"
     );
   }
 
+
   async function addVideo() {
-    if (!requirePermission("managerCanManageVideos")) {
+
+    if (
+      !requirePermission(
+        "managerCanManageVideos"
+      )
+    ) {
       return;
     }
 
-    const title = getInputValue("videoTitle");
-    const description = getInputValue(
-      "videoDescription",
-    );
-    const path = getInputValue("videoPath");
+
+    const title =
+      getInputValue(
+        "videoTitle"
+      );
+
+
+    const description =
+      getInputValue(
+        "videoDescription"
+      );
+
+
+    const path =
+      getInputValue(
+        "videoPath"
+      );
+
 
     if (!title) {
-      showErrorMessage("ভিডিওর নাম দিন।");
+
+      showErrorMessage(
+        "ভিডিওর নাম দিন।"
+      );
+
       return;
     }
+
 
     if (!path) {
-      showErrorMessage("Video Path দিন।");
+
+      showErrorMessage(
+        "Video Path দিন।"
+      );
+
       return;
     }
 
-    const videos = getCollection("videos");
+
+    const videos =
+      getCollection(
+        "videos"
+      );
+
 
     videos.push({
-      id: createID("video"),
+
+      id:
+        createID(
+          "video"
+        ),
+
       title,
+
       description,
+
       path,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+
+      createdAt:
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString(),
     });
 
-    saveCollectionToState("videos", videos);
+
+    saveCollectionToState(
+      "videos",
+      videos
+    );
+
 
     clearFields([
       "videoTitle",
@@ -771,9 +1408,14 @@ const DalimgariManagerDashboard = (() => {
       "videoPath",
     ]);
 
+
     renderVideos();
 
-    setDirty("videos", true);
+
+    setDirty(
+      "videos",
+      true
+    );
   }
 
 
@@ -782,48 +1424,98 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function renderAudio() {
+
     renderGenericCollection(
       "audioList",
       "audio",
       "title",
       "description",
-      "path",
+      "path"
     );
   }
 
+
   async function addAudio() {
-    if (!requirePermission("managerCanManageAudio")) {
+
+    if (
+      !requirePermission(
+        "managerCanManageAudio"
+      )
+    ) {
       return;
     }
 
-    const title = getInputValue("audioTitle");
-    const description = getInputValue(
-      "audioDescription",
-    );
-    const path = getInputValue("audioPath");
+
+    const title =
+      getInputValue(
+        "audioTitle"
+      );
+
+
+    const description =
+      getInputValue(
+        "audioDescription"
+      );
+
+
+    const path =
+      getInputValue(
+        "audioPath"
+      );
+
 
     if (!title) {
-      showErrorMessage("অডিওর নাম দিন।");
+
+      showErrorMessage(
+        "অডিওর নাম দিন।"
+      );
+
       return;
     }
+
 
     if (!path) {
-      showErrorMessage("Audio Path দিন।");
+
+      showErrorMessage(
+        "Audio Path দিন।"
+      );
+
       return;
     }
 
-    const audio = getCollection("audio");
+
+    const audio =
+      getCollection(
+        "audio"
+      );
+
 
     audio.push({
-      id: createID("audio"),
+
+      id:
+        createID(
+          "audio"
+        ),
+
       title,
+
       description,
+
       path,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+
+      createdAt:
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString(),
     });
 
-    saveCollectionToState("audio", audio);
+
+    saveCollectionToState(
+      "audio",
+      audio
+    );
+
 
     clearFields([
       "audioTitle",
@@ -831,9 +1523,14 @@ const DalimgariManagerDashboard = (() => {
       "audioPath",
     ]);
 
+
     renderAudio();
 
-    setDirty("audio", true);
+
+    setDirty(
+      "audio",
+      true
+    );
   }
 
 
@@ -842,50 +1539,106 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function renderEvents() {
+
     renderGenericCollection(
       "eventList",
       "events",
       "title",
       "description",
-      "image",
+      "image"
     );
   }
 
+
   async function addEvent() {
-    if (!requirePermission("managerCanManageEvents")) {
+
+    if (
+      !requirePermission(
+        "managerCanManageEvents"
+      )
+    ) {
       return;
     }
 
-    const title = getInputValue("eventTitle");
-    const date = getInputValue("eventDate");
-    const description = getInputValue(
-      "eventDescription",
-    );
-    const image = getInputValue("eventImage");
+
+    const title =
+      getInputValue(
+        "eventTitle"
+      );
+
+
+    const date =
+      getInputValue(
+        "eventDate"
+      );
+
+
+    const description =
+      getInputValue(
+        "eventDescription"
+      );
+
+
+    const image =
+      getInputValue(
+        "eventImage"
+      );
+
 
     if (!title) {
-      showErrorMessage("Event Title দিন।");
+
+      showErrorMessage(
+        "Event Title দিন।"
+      );
+
       return;
     }
+
 
     if (!date) {
-      showErrorMessage("Event Date নির্বাচন করুন।");
+
+      showErrorMessage(
+        "Event Date নির্বাচন করুন।"
+      );
+
       return;
     }
 
-    const events = getCollection("events");
+
+    const events =
+      getCollection(
+        "events"
+      );
+
 
     events.push({
-      id: createID("event"),
+
+      id:
+        createID(
+          "event"
+        ),
+
       title,
+
       date,
+
       description,
+
       image,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+
+      createdAt:
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString(),
     });
 
-    saveCollectionToState("events", events);
+
+    saveCollectionToState(
+      "events",
+      events
+    );
+
 
     clearFields([
       "eventTitle",
@@ -894,9 +1647,14 @@ const DalimgariManagerDashboard = (() => {
       "eventImage",
     ]);
 
+
     renderEvents();
 
-    setDirty("events", true);
+
+    setDirty(
+      "events",
+      true
+    );
   }
 
 
@@ -909,164 +1667,315 @@ const DalimgariManagerDashboard = (() => {
     collectionName,
     titleKey,
     descriptionKey,
-    mediaKey,
+    mediaKey
   ) {
-    const container = $(containerId);
+
+    const container =
+      $(containerId);
+
 
     if (!container) {
       return;
     }
 
-    container.innerHTML = "";
 
-    const items = getCollection(collectionName);
+    container.innerHTML =
+      "";
+
+
+    const items =
+      getCollection(
+        collectionName
+      );
+
 
     if (!items.length) {
-      const empty = document.createElement("p");
 
-      empty.className = "empty-state";
+      const empty =
+        document.createElement(
+          "p"
+        );
+
+
+      empty.className =
+        "empty-state";
+
+
       empty.textContent =
         "কোনো তথ্য যোগ করা হয়নি।";
 
-      container.appendChild(empty);
+
+      container.appendChild(
+        empty
+      );
+
+
       return;
     }
 
-    items.forEach((item, index) => {
-      const element = createManagementItem(
-        item[titleKey] || "তথ্য",
-        item[descriptionKey] || "",
-        item[mediaKey] || "",
-        () => removeCollectionItem(
-          collectionName,
-          index,
-          collectionName,
-        ),
-      );
 
-      container.appendChild(element);
-    });
+    items.forEach(
+      (item, index) => {
+
+        const element =
+          createManagementItem(
+
+            item[titleKey] ||
+              "তথ্য",
+
+            item[descriptionKey] ||
+              "",
+
+            item[mediaKey] ||
+              "",
+
+            () =>
+              removeCollectionItem(
+                collectionName,
+                index,
+                collectionName
+              )
+          );
+
+
+        container.appendChild(
+          element
+        );
+      }
+    );
   }
+
 
   function createManagementItem(
     title,
     description,
     media,
-    removeCallback,
+    removeCallback
   ) {
+
     const wrapper =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     wrapper.className =
       "management-item";
 
+
     const content =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     content.className =
       "management-item-content";
 
+
     const heading =
-      document.createElement("strong");
+      document.createElement(
+        "strong"
+      );
 
-    heading.textContent = safeString(title);
 
-    content.appendChild(heading);
+    heading.textContent =
+      safeString(
+        title
+      );
+
+
+    content.appendChild(
+      heading
+    );
+
 
     if (description) {
+
       const text =
-        document.createElement("p");
+        document.createElement(
+          "p"
+        );
+
 
       text.textContent =
-        safeString(description);
+        safeString(
+          description
+        );
 
-      content.appendChild(text);
+
+      content.appendChild(
+        text
+      );
     }
+
 
     if (media) {
+
       const path =
-        document.createElement("small");
+        document.createElement(
+          "small"
+        );
+
 
       path.textContent =
-        safeString(media);
+        safeString(
+          media
+        );
 
-      content.appendChild(path);
+
+      content.appendChild(
+        path
+      );
     }
 
+
     const actions =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     actions.className =
       "management-item-actions";
 
-    const removeButton =
-      document.createElement("button");
 
-    removeButton.type = "button";
-    removeButton.textContent = "Remove";
+    const removeButton =
+      document.createElement(
+        "button"
+      );
+
+
+    removeButton.type =
+      "button";
+
+
+    removeButton.textContent =
+      "Remove";
+
 
     removeButton.addEventListener(
       "click",
-      removeCallback,
+      removeCallback
     );
 
-    actions.appendChild(removeButton);
 
-    wrapper.appendChild(content);
-    wrapper.appendChild(actions);
+    actions.appendChild(
+      removeButton
+    );
+
+
+    wrapper.appendChild(
+      content
+    );
+
+
+    wrapper.appendChild(
+      actions
+    );
+
 
     return wrapper;
   }
 
+
   function removeCollectionItem(
     collectionName,
     index,
-    dirtySection,
+    dirtySection
   ) {
-    const items =
-      getCollection(collectionName);
 
-    const item = items[index];
+    const items =
+      getCollection(
+        collectionName
+      );
+
+
+    const item =
+      items[index];
+
 
     if (!item) {
       return;
     }
 
-    const confirmed = confirm(
-      `"${item.name || item.title || "এই তথ্য"}" মুছে ফেলবেন?`,
-    );
+
+    const confirmed =
+      confirm(
+        `"${item.name || item.title || "এই তথ্য"}" মুছে ফেলবেন?`
+      );
+
 
     if (!confirmed) {
       return;
     }
 
-    items.splice(index, 1);
+
+    items.splice(
+      index,
+      1
+    );
+
 
     saveCollectionToState(
       collectionName,
-      items,
+      items
     );
 
-    if (collectionName === "people") {
+
+    if (
+      collectionName ===
+      "people"
+    ) {
+
       renderPeople();
-    } else if (collectionName === "images") {
+
+    } else if (
+      collectionName ===
+      "images"
+    ) {
+
       renderImages();
-    } else if (collectionName === "videos") {
+
+    } else if (
+      collectionName ===
+      "videos"
+    ) {
+
       renderVideos();
-    } else if (collectionName === "audio") {
+
+    } else if (
+      collectionName ===
+      "audio"
+    ) {
+
       renderAudio();
-    } else if (collectionName === "events") {
+
+    } else if (
+      collectionName ===
+      "events"
+    ) {
+
       renderEvents();
     }
 
-    setDirty(dirtySection, true);
+
+    setDirty(
+      dirtySection,
+      true
+    );
+
 
     logActivity(
       "manager_collection_item_removed",
       {
-        collection: collectionName,
-        id: item.id || "",
-      },
+        collection:
+          collectionName,
+
+        id:
+          item.id ||
+          "",
+      }
     );
   }
 
@@ -1075,38 +1984,65 @@ const DalimgariManagerDashboard = (() => {
      SAVE MEDIA / COLLECTION DATA
   ========================================================= */
 
-  async function saveCollection(section, collectionName) {
+  async function saveCollection(
+    section,
+    collectionName
+  ) {
+
     if (state.saving) {
       return;
     }
 
-    setDashboardLoading(true);
+
+    setDashboardLoading(
+      true
+    );
+
 
     try {
+
       if (
         typeof window.saveSiteData !==
         "function"
       ) {
+
         throw new Error(
-          "saveSiteData function পাওয়া যায়নি।",
+          "saveSiteData function পাওয়া যায়নি।"
         );
       }
+
 
       const result =
         await window.saveSiteData(
-          state.siteData,
+          state.siteData
         );
 
-      if (result === false) {
+
+      if (
+        result === false
+      ) {
+
         throw new Error(
-          `${collectionName} সংরক্ষণ করা যায়নি।`,
+          `${collectionName} সংরক্ষণ করা যায়নি।`
         );
       }
+
 
       state.siteData =
         await window.getSiteData();
 
-      setDirty(section, false);
+
+      setDirty(
+        section,
+        false
+      );
+
+
+      state.snapshots[section] =
+        createCollectionSnapshot(
+          collectionName
+        );
+
 
       await logActivity(
         `manager_${collectionName}_saved`,
@@ -1114,23 +2050,31 @@ const DalimgariManagerDashboard = (() => {
           user:
             state.currentUser?.username ||
             "manager",
-        },
+        }
       );
+
 
       showSuccessMessage(
-        "পরিবর্তন সফলভাবে সংরক্ষণ হয়েছে।",
-      );
-    } catch (error) {
-      await logError(
-        error,
-        `saveCollection.${collectionName}`,
+        "পরিবর্তন সফলভাবে সংরক্ষণ হয়েছে।"
       );
 
-      showErrorMessage(
-        "পরিবর্তন সংরক্ষণ করা যায়নি।",
+    } catch (error) {
+
+      await logError(
+        error,
+        `saveCollection.${collectionName}`
       );
+
+
+      showErrorMessage(
+        "পরিবর্তন সংরক্ষণ করা যায়নি।"
+      );
+
     } finally {
-      setDashboardLoading(false);
+
+      setDashboardLoading(
+        false
+      );
     }
   }
 
@@ -1139,14 +2083,24 @@ const DalimgariManagerDashboard = (() => {
      CLEAR FIELDS
   ========================================================= */
 
-  function clearFields(ids) {
-    ids.forEach((id) => {
-      const element = $(id);
+  function clearFields(
+    ids
+  ) {
 
-      if (element) {
-        element.value = "";
+    ids.forEach(
+      (id) => {
+
+        const element =
+          $(id);
+
+
+        if (element) {
+
+          element.value =
+            "";
+        }
       }
-    });
+    );
   }
 
 
@@ -1154,22 +2108,33 @@ const DalimgariManagerDashboard = (() => {
      SNAPSHOTS
   ========================================================= */
 
-  function createCollectionSnapshot(name) {
+  function createCollectionSnapshot(
+    name
+  ) {
+
     return JSON.stringify(
-      getCollection(name),
+      getCollection(
+        name
+      )
     );
   }
 
+
   function updateCollectionSnapshot(
     section,
-    collectionName,
+    collectionName
   ) {
+
     state.snapshots[section] =
       createCollectionSnapshot(
-        collectionName,
+        collectionName
       );
 
-    setDirty(section, false);
+
+    setDirty(
+      section,
+      false
+    );
   }
 
 
@@ -1178,73 +2143,103 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function setupEvents() {
+
+    /*
+     * Logout button must remain enabled while
+     * dashboard loading/saving is active.
+     */
+
     const logoutButton =
       $("logoutButton");
 
+
     if (logoutButton) {
+
+      logoutButton.dataset.lockDuringLoading =
+        "false";
+
+
       logoutButton.addEventListener(
         "click",
-        logout,
+        logout
       );
     }
+
 
     const saveVillageButton =
       $("saveVillageButton");
 
+
     if (saveVillageButton) {
+
       saveVillageButton.addEventListener(
         "click",
-        saveVillageInformation,
+        saveVillageInformation
       );
     }
+
 
     const addPersonButton =
       $("addPersonButton");
 
+
     if (addPersonButton) {
+
       addPersonButton.addEventListener(
         "click",
-        addPerson,
+        addPerson
       );
     }
+
 
     const addImageButton =
       $("addImageButton");
 
+
     if (addImageButton) {
+
       addImageButton.addEventListener(
         "click",
-        addImage,
+        addImage
       );
     }
+
 
     const addVideoButton =
       $("addVideoButton");
 
+
     if (addVideoButton) {
+
       addVideoButton.addEventListener(
         "click",
-        addVideo,
+        addVideo
       );
     }
+
 
     const addAudioButton =
       $("addAudioButton");
 
+
     if (addAudioButton) {
+
       addAudioButton.addEventListener(
         "click",
-        addAudio,
+        addAudio
       );
     }
+
 
     const addEventButton =
       $("addEventButton");
 
+
     if (addEventButton) {
+
       addEventButton.addEventListener(
         "click",
-        addEvent,
+        addEvent
       );
     }
   }
@@ -1255,6 +2250,7 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   function setupCollectionDirtyTracking() {
+
     const definitions = [
       ["people", "people"],
       ["images", "images"],
@@ -1263,13 +2259,16 @@ const DalimgariManagerDashboard = (() => {
       ["events", "events"],
     ];
 
+
     definitions.forEach(
       ([section, collectionName]) => {
+
         state.snapshots[section] =
           createCollectionSnapshot(
-            collectionName,
+            collectionName
           );
-      });
+      }
+    );
   }
 
 
@@ -1278,6 +2277,7 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   async function saveDirtyCollections() {
+
     const collections = [
       ["people", "people"],
       ["images", "images"],
@@ -1286,14 +2286,25 @@ const DalimgariManagerDashboard = (() => {
       ["events", "events"],
     ];
 
-    for (const [section, collectionName] of collections) {
-      if (!isDirty(section)) {
+
+    for (
+      const [
+        section,
+        collectionName
+      ]
+      of collections
+    ) {
+
+      if (
+        !isDirty(section)
+      ) {
         continue;
       }
 
+
       await saveCollection(
         section,
-        collectionName,
+        collectionName
       );
     }
   }
@@ -1304,57 +2315,177 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   async function logout() {
-    if (state.saving) {
+
+    /*
+     * Prevent duplicate logout clicks.
+     */
+
+    if (
+      state.logoutInProgress
+    ) {
       return;
     }
 
+
+    state.logoutInProgress =
+      true;
+
+
+    /*
+     * Do not interrupt an active save.
+     */
+
+    if (state.saving) {
+
+      state.logoutInProgress =
+        false;
+
+      return;
+    }
+
+
+    /*
+     * Warn about unsaved changes.
+     */
+
     if (isDirty()) {
-      const confirmed = confirm(
-        "কিছু পরিবর্তন এখনো Save করা হয়নি। Logout করলে সেগুলো হারিয়ে যেতে পারে।\n\nLogout করবেন?",
-      );
+
+      const confirmed =
+        confirm(
+          "কিছু পরিবর্তন এখনো Save করা হয়নি। Logout করলে সেগুলো হারিয়ে যেতে পারে।\n\nLogout করবেন?"
+        );
+
 
       if (!confirmed) {
+
+        state.logoutInProgress =
+          false;
+
         return;
       }
     }
 
-    try {
-      await logActivity(
-        "manager_logout",
-        {
-          user:
-            state.currentUser?.username ||
-            "manager",
-        },
-      );
 
-      const dataLayer = getDataLayer();
+    /*
+     * Save current user BEFORE clearing session.
+     */
+
+    const currentUser =
+      state.currentUser ||
+      getCurrentUser();
+
+
+    /* =====================================================
+       STEP 1
+       Immediately invalidate temporary session.
+    ===================================================== */
+
+    clearLocalSession();
+
+
+    /*
+     * Prevent further dashboard actions.
+     */
+
+    state.ready =
+      false;
+
+
+    /*
+     * Clear dirty state so beforeunload cannot
+     * interfere with the redirect.
+     */
+
+    clearAllDirtyState();
+
+
+    /* =====================================================
+       STEP 2
+       Best-effort Supabase Auth signOut.
+       
+       The current temporary RPC login does not create
+       a Supabase Auth session. Therefore signOut failure
+       must NEVER prevent logout.
+    ===================================================== */
+
+    try {
+
+      const supabaseClient =
+        window.DalimgariSupabase;
+
+
+      if (
+        supabaseClient &&
+        supabaseClient.auth &&
+        typeof supabaseClient.auth.signOut ===
+          "function"
+      ) {
+
+        await supabaseClient.auth.signOut();
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "Supabase signOut failed, but logout will continue:",
+        error
+      );
+    }
+
+
+    /* =====================================================
+       STEP 3
+       Activity logging is optional.
+       
+       Logging failure must NEVER prevent logout.
+    ===================================================== */
+
+    try {
+
+      const dataLayer =
+        getDataLayer();
+
 
       if (
         dataLayer &&
-        typeof dataLayer.logout ===
+        typeof dataLayer.logActivity ===
           "function"
       ) {
-        await dataLayer.logout();
-      } else {
-        sessionStorage.removeItem(
-          "dalimgariUser",
-        );
-      }
-    } catch (error) {
-      await logError(error, "manager.logout");
 
-      try {
-        sessionStorage.removeItem(
-          "dalimgariUser",
+        await dataLayer.logActivity(
+          "manager_logout",
+          {
+            user:
+              currentUser?.username ||
+              "manager",
+          }
         );
-      } catch (removeError) {
-        console.error(removeError);
       }
+
+    } catch (error) {
+
+      console.warn(
+        "Logout activity logging failed:",
+        error
+      );
     }
 
+
+    /* =====================================================
+       STEP 4
+       Final safety removal.
+    ===================================================== */
+
+    clearLocalSession();
+
+
+    /* =====================================================
+       STEP 5
+       Redirect to login.
+    ===================================================== */
+
     window.location.replace(
-      "login.html",
+      "login.html"
     );
   }
 
@@ -1364,85 +2495,124 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   async function initialize() {
-    if (!checkManagerLogin()) {
+
+    if (
+      !checkManagerLogin()
+    ) {
       return;
     }
 
-    setDashboardLoading(true);
+
+    setDashboardLoading(
+      true
+    );
+
 
     try {
+
       if (
         typeof window.getSiteData !==
         "function"
       ) {
+
         throw new Error(
-          "getSiteData function পাওয়া যায়নি।",
+          "getSiteData function পাওয়া যায়নি।"
         );
       }
+
 
       if (
         typeof window.getSettingsData !==
         "function"
       ) {
+
         throw new Error(
-          "getSettingsData function পাওয়া যায়নি।",
+          "getSettingsData function পাওয়া যায়নি।"
         );
       }
+
 
       state.siteData =
         await window.getSiteData();
 
+
       state.settingsData =
         await window.getSettingsData();
 
+
       loadVillageInformation();
 
+
       renderPeople();
+
       renderImages();
+
       renderVideos();
+
       renderAudio();
+
       renderEvents();
 
+
       setupTabs();
+
       setupEvents();
+
       setupVillageDirtyTracking();
+
       setupCollectionDirtyTracking();
+
 
       state.snapshots.village =
         villageSnapshot();
 
+
       state.snapshots.people =
         createCollectionSnapshot(
-          "people",
+          "people"
         );
+
 
       state.snapshots.images =
         createCollectionSnapshot(
-          "images",
+          "images"
         );
+
 
       state.snapshots.videos =
         createCollectionSnapshot(
-          "videos",
+          "videos"
         );
+
 
       state.snapshots.audio =
         createCollectionSnapshot(
-          "audio",
+          "audio"
         );
+
 
       state.snapshots.events =
         createCollectionSnapshot(
-          "events",
+          "events"
         );
 
-      Object.keys(state.dirty).forEach(
+
+      Object.keys(
+        state.dirty
+      ).forEach(
         (section) => {
-          setDirty(section, false);
-        },
+
+          setDirty(
+            section,
+            false
+          );
+        }
       );
 
-      state.ready = true;
+
+      state.ready =
+        true;
+
 
       await logActivity(
         "manager_dashboard_opened",
@@ -1450,19 +2620,26 @@ const DalimgariManagerDashboard = (() => {
           user:
             state.currentUser?.username ||
             "manager",
-        },
-      );
-    } catch (error) {
-      await logError(
-        error,
-        "manager.initialize",
+        }
       );
 
-      showErrorMessage(
-        "Manager Dashboard চালু করা যায়নি। পেজটি আবার খুলে চেষ্টা করুন।",
+    } catch (error) {
+
+      await logError(
+        error,
+        "manager.initialize"
       );
+
+
+      showErrorMessage(
+        "Manager Dashboard চালু করা যায়নি। পেজটি আবার খুলে চেষ্টা করুন।"
+      );
+
     } finally {
-      setDashboardLoading(false);
+
+      setDashboardLoading(
+        false
+      );
     }
   }
 
@@ -1473,39 +2650,92 @@ const DalimgariManagerDashboard = (() => {
 
   window.addEventListener(
     "pageshow",
-    () => {
-      if (!state.ready) {
+    (event) => {
+
+      /*
+       * Re-check authentication when the dashboard
+       * returns from browser Back/Forward cache.
+       */
+
+      if (
+        event.persisted ||
+        !state.ready
+      ) {
+
         checkManagerLogin();
       }
-    },
+    }
   );
+
+
+  /*
+   * Extra protection when a cached dashboard
+   * becomes visible again.
+   */
+
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+
+      if (
+        document.visibilityState ===
+          "visible" &&
+        state.ready
+      ) {
+
+        const user =
+          getCurrentUser();
+
+
+        if (
+          !user ||
+          user.role !== "manager"
+        ) {
+
+          clearLocalSession();
+
+          clearAllDirtyState();
+
+          window.location.replace(
+            "login.html"
+          );
+        }
+      }
+    }
+  );
+
 
   window.addEventListener(
     "error",
     (event) => {
+
       logError(
         event.error ||
           new Error(
             event.message ||
-              "Unknown error",
+              "Unknown error"
           ),
-        "manager.window.error",
+        "manager.window.error"
       );
-    },
+    }
   );
+
 
   window.addEventListener(
     "unhandledrejection",
     (event) => {
+
       logError(
         event.reason instanceof Error
           ? event.reason
           : new Error(
-              String(event.reason),
+              String(
+                event.reason
+              )
             ),
-        "manager.unhandledrejection",
+        "manager.unhandledrejection"
       );
-    },
+    }
   );
 
 
@@ -1514,29 +2744,38 @@ const DalimgariManagerDashboard = (() => {
   ========================================================= */
 
   return {
+
     initialize,
 
     getState: () => ({
       ...state,
+
       dirty: {
         ...state.dirty,
       },
     }),
 
     hasPermission,
+
     showTab,
 
     addPerson,
+
     addImage,
+
     addVideo,
+
     addAudio,
+
     addEvent,
 
     saveVillageInformation,
+
     saveCollection,
 
     logout,
   };
+
 })();
 
 
@@ -1547,8 +2786,10 @@ const DalimgariManagerDashboard = (() => {
 document.addEventListener(
   "DOMContentLoaded",
   () => {
+
     DalimgariManagerDashboard.initialize();
-  },
+
+  }
 );
 
 
