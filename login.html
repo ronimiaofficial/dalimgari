@@ -728,31 +728,30 @@
                  */
 
                 if (
-                    error ||
-                    !data ||
-                    !data.user
-                ) {
+    error ||
+    !data ||
+    !data.user
+) {
 
-                    registerLoginFailure();
+    console.error(
+        "Supabase Login Error:",
+        error
+    );
 
+    registerLoginFailure();
 
-                    /*
-                     * Password field clear
-                     */
+    showLoginMessage(
+        error?.message ||
+        "Supabase authentication failed.",
+        "error"
+    );
 
-                    if (
-                        passwordInput
-                    ) {
+    if (passwordInput) {
+        passwordInput.value = "";
+    }
 
-                        passwordInput.value =
-                            "";
-
-                    }
-
-
-                    return;
-
-                }
+    return;
+}
 
 
                 /* ==========================================
