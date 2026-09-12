@@ -1,1 +1,41 @@
-a
+{
+  "siteName": "Dalimgari | ডালিমগাড়ী",
+  "tagline": "আমাদের গ্রাম, আমাদের গল্প",
+  "villageName": "ডালিমগাড়ী",
+
+  "villageDescription": "ডালিমগাড়ী আমাদের প্রিয় গ্রাম। এই ওয়েবসাইটে আমাদের গ্রামের মানুষ, প্রকৃতি, ইতিহাস, ঐতিহ্য, ছবি, ভিডিও এবং বিভিন্ন তথ্য সংরক্ষণ করা হবে।",
+
+  "detailedDescription": "",
+
+  "location": "",
+
+  "history": "",
+
+  "nature": "",
+
+  "contact": "",
+
+  "contactDetails": "",
+
+  "headerImage": "images/banner.jpg",
+
+  "logo": "images/logo.jpg",
+
+  "contactLinks": [],
+
+  "footerText": "",
+
+  "copyrightText": "",
+
+  "managementText": "",
+
+  "people": [],
+
+  "images": [],
+
+  "videos": [],
+
+  "audio": [],
+
+  "events": []
+}
