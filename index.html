@@ -22,6 +22,24 @@
 
 <body>
 
+  <div id="dalimgariDebugBox" style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#b00020;color:#fff;font-size:14px;padding:10px;white-space:pre-wrap;display:none;"></div>
+
+<script>
+    (function () {
+        var box = document.getElementById("dalimgariDebugBox");
+        function show(msg) {
+            box.style.display = "block";
+            box.textContent += msg + "\n\n";
+        }
+        window.addEventListener("error", function (e) {
+            show("ERROR: " + (e.message || e) + "\nFile: " + (e.filename || "") + " Line: " + (e.lineno || ""));
+        });
+        window.addEventListener("unhandledrejection", function (e) {
+            show("PROMISE ERROR: " + (e.reason && e.reason.message ? e.reason.message : e.reason));
+        });
+    })();
+</script>
+
 
     <!-- Sidebar Button -->
 
