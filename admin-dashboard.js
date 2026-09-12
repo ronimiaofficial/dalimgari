@@ -81,6 +81,7 @@ const DalimgariAdminDashboard = (() => {
 
     ready: false,
     saving: false,
+    logoutInProgress: false,
 
     dirty: {
       website: false,
@@ -250,6 +251,8 @@ const DalimgariAdminDashboard = (() => {
         "Session remove failed:",
         error
       );
+
+      state.currentUser = null;
 
       return false;
     }
@@ -576,6 +579,24 @@ const DalimgariAdminDashboard = (() => {
     ).forEach(
       updateDirtyIndicator
     );
+  }
+
+
+  /*
+   * Clear all dirty flags.
+   *
+   * Used during logout so that the beforeunload handler
+   * cannot interfere with the redirect.
+   */
+
+  function clearAllDirtyState() {
+
+    Object.keys(
+      state.dirty
+    ).forEach((section) => {
+      state.dirty[section] = false;
+      updateDirtyIndicator(section);
+    });
   }
 
 
@@ -1610,11 +1631,6 @@ const DalimgariAdminDashboard = (() => {
       permissions.managerCanManageEvents
     );
 
-
-    /*
-     * These permissions are always
-     * controlled by Admin.
-     */
 
     setCheckbox(
       "managerCanEditManagerProfile",
@@ -3132,9 +3148,8 @@ const DalimgariAdminDashboard = (() => {
 
     /* =====================================================
        LOGOUT BUTTON
-       IMPORTANT:
-       Logout must remain clickable even while dashboard
-       loading/saving is active.
+
+       Must remain clickable while dashboard loading/saving.
     ===================================================== */
 
     const logoutButton =
@@ -3162,7 +3177,7 @@ const DalimgariAdminDashboard = (() => {
   async function logout() {
 
     /*
-     * Prevent duplicate logout calls.
+     * Prevent duplicate clicks.
      */
 
     if (
@@ -3176,8 +3191,7 @@ const DalimgariAdminDashboard = (() => {
 
 
     /*
-     * If data is currently saving,
-     * don't interrupt the save operation.
+     * Do not interrupt an active save.
      */
 
     if (state.saving) {
@@ -3190,7 +3204,7 @@ const DalimgariAdminDashboard = (() => {
 
 
     /*
-     * Unsaved changes warning.
+     * Warn about unsaved changes.
      */
 
     if (isDirty()) {
@@ -3212,8 +3226,8 @@ const DalimgariAdminDashboard = (() => {
 
 
     /*
-     * Save current user BEFORE removing session.
-     * This is only needed for the activity log.
+     * Save user information BEFORE removing
+     * the temporary session.
      */
 
     const currentUser =
@@ -3222,25 +3236,34 @@ const DalimgariAdminDashboard = (() => {
 
     /* =====================================================
        STEP 1
-       Immediately invalidate local temporary session.
+       Immediately invalidate temporary local session.
     ===================================================== */
 
     clearLocalSession();
 
 
     /*
-     * Disable further dashboard actions.
+     * Prevent any further dashboard work.
      */
 
     state.ready = false;
 
 
+    /*
+     * Clear dirty state so browser unload protection
+     * cannot interfere with redirect.
+     */
+
+    clearAllDirtyState();
+
+
     /* =====================================================
        STEP 2
-       Best-effort Supabase Auth signOut.
+       Best-effort Supabase signOut.
        
-       Current temporary login does not create a Supabase
-       Auth session, so this must NEVER block logout.
+       Current temporary RPC login does not create
+       a Supabase Auth session. Therefore this operation
+       must NEVER block local logout.
     ===================================================== */
 
     try {
@@ -3272,7 +3295,7 @@ const DalimgariAdminDashboard = (() => {
        STEP 3
        Activity logging is optional.
        
-       Logging failure must NEVER prevent logout.
+       Failure must NEVER prevent logout.
     ===================================================== */
 
     try {
@@ -3316,7 +3339,7 @@ const DalimgariAdminDashboard = (() => {
 
     /* =====================================================
        STEP 5
-       Go to login page.
+       Redirect.
     ===================================================== */
 
     window.location.replace(
@@ -3435,10 +3458,8 @@ const DalimgariAdminDashboard = (() => {
     (event) => {
 
       /*
-       * IMPORTANT:
-       *
-       * Browser Back/Forward cache (bfcache) থেকে
-       * dashboard ফিরে এলে আবার authentication check হবে।
+       * Check authentication again when the page
+       * comes from browser Back/Forward cache.
        */
 
       if (
@@ -3453,10 +3474,8 @@ const DalimgariAdminDashboard = (() => {
 
 
   /*
-   * Extra protection when browser becomes visible again.
-   *
-   * This catches some cases where a cached dashboard
-   * becomes visible after logout.
+   * Extra protection when the cached dashboard
+   * becomes visible again.
    */
 
   document.addEventListener(
@@ -3479,6 +3498,8 @@ const DalimgariAdminDashboard = (() => {
         ) {
 
           clearLocalSession();
+
+          clearAllDirtyState();
 
           window.location.replace(
             "login.html"
@@ -3578,7 +3599,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   LEGACY / DEBUG ACCESS
+   GLOBAL ACCESS
 ========================================================= */
 
 window.DalimgariAdminDashboard =
