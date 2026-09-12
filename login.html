@@ -41,15 +41,10 @@
                 Login
             </h1>
 
-
             <p id="loginDescription">
                 Admin অথবা Manager হিসেবে প্রবেশ করুন
             </p>
 
-
-            <!-- ==========================================
-                 LOGIN FORM
-            =========================================== -->
 
             <form
                 id="loginForm"
@@ -60,7 +55,6 @@
                     Username
                 </label>
 
-
                 <input
                     type="text"
                     id="username"
@@ -69,14 +63,12 @@
                     placeholder="Username"
                     maxlength="100"
                     required
-                    aria-required="true"
                 >
 
 
                 <label for="password">
                     Password
                 </label>
-
 
                 <input
                     type="password"
@@ -86,7 +78,6 @@
                     placeholder="Password"
                     maxlength="200"
                     required
-                    aria-required="true"
                 >
 
 
@@ -101,10 +92,6 @@
             </form>
 
 
-            <!-- ==========================================
-                 LOGIN MESSAGE
-            =========================================== -->
-
             <p
                 id="loginMessage"
                 class="login-message"
@@ -112,10 +99,6 @@
                 aria-live="polite"
             ></p>
 
-
-            <!-- ==========================================
-                 BACK TO WEBSITE
-            =========================================== -->
 
             <div class="back-to-website">
 
@@ -130,164 +113,56 @@
     </main>
 
 
-    <!-- ==============================================
-         SUPABASE
-    =============================================== -->
+    <!-- Supabase -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
     <script src="supabase-client.js"></script>
 
 
-    <!-- ==============================================
-         AUTHENTICATION CONTROLLER
-    =============================================== -->
-
     <script>
 
-        /* ==================================================
-           DALIMGARI — SUPABASE LOGIN
-           Authentication:
-           Supabase Auth
+        const MAX_ATTEMPTS = 5;
 
-           Authorization:
-           public.profiles.role
+        const LOCK_TIME = 30000;
 
-           IMPORTANT:
-           No password is stored locally.
-           No fake session is created.
-        ================================================== */
+        let attempts = 0;
+
+        let lockedUntil = 0;
+
+        let processing = false;
 
 
-        /* ==================================================
-           CONFIGURATION
-        ================================================== */
-
-        const DALIMGARI_LOGIN_MAX_ATTEMPTS = 5;
-
-        const DALIMGARI_LOGIN_LOCK_TIME = 30000;
-
-
-        /* ==================================================
-           LOGIN STATE
-        ================================================== */
-
-        let loginAttempts = 0;
-
-        let loginLockedUntil = 0;
-
-        let loginProcessing = false;
-
-
-        /* ==================================================
-           ELEMENTS
-        ================================================== */
-
-        const loginForm =
-            document.getElementById(
-                "loginForm"
-            );
-
+        const form =
+            document.getElementById("loginForm");
 
         const usernameInput =
-            document.getElementById(
-                "username"
-            );
-
+            document.getElementById("username");
 
         const passwordInput =
-            document.getElementById(
-                "password"
-            );
-
+            document.getElementById("password");
 
         const loginButton =
-            document.getElementById(
-                "loginButton"
-            );
+            document.getElementById("loginButton");
+
+        const message =
+            document.getElementById("loginMessage");
 
 
-        const loginMessage =
-            document.getElementById(
-                "loginMessage"
-            );
+        function showMessage(text, type = "info") {
 
+            if (!message) return;
 
-        /* ==================================================
-           SUPABASE CLIENT
-        ================================================== */
+            message.textContent = text;
 
-        function getSupabaseClient() {
-
-            const client =
-                window.DalimgariSupabase;
-
-
-            if (
-                !client ||
-                !client.auth
-            ) {
-
-                throw new Error(
-                    "Supabase client পাওয়া যায়নি।"
-                );
-
-            }
-
-
-            return client;
+            message.dataset.type = type;
 
         }
 
 
-        /* ==================================================
-           MESSAGE
-        ================================================== */
+        function setLoading(loading) {
 
-        function showLoginMessage(
-            message,
-            type = "info"
-        ) {
-
-            if (!loginMessage) {
-                return;
-            }
-
-
-            loginMessage.textContent =
-                message || "";
-
-
-            loginMessage.dataset.type =
-                type;
-
-        }
-
-
-        /* ==================================================
-           LOADING
-        ================================================== */
-
-        function setLoginLoading(
-            loading
-        ) {
-
-            if (!loginButton) {
-                return;
-            }
-
-
-            loginButton.disabled =
-                loading;
-
-
-            loginButton.setAttribute(
-                "aria-busy",
-                loading
-                    ? "true"
-                    : "false"
-            );
-
+            loginButton.disabled = loading;
 
             loginButton.textContent =
                 loading
@@ -297,173 +172,34 @@
         }
 
 
-        /* ==================================================
-           USERNAME → EMAIL
-        ================================================== */
+        function isLocked() {
 
-        function getAuthenticationEmail(
-            username
-        ) {
-
-            const normalizedUsername =
-                String(
-                    username || ""
-                )
-                    .trim()
-                    .toLowerCase();
-
-
-            if (
-                normalizedUsername ===
-                "admin"
-            ) {
-
-                return "admin@dalimgari.local";
-
-            }
-
-
-            if (
-                normalizedUsername ===
-                "manager"
-            ) {
-
-                return "manager@dalimgari.local";
-
-            }
-
-
-            return null;
+            return Date.now() < lockedUntil;
 
         }
 
 
-        /* ==================================================
-           INPUT VALIDATION
-        ================================================== */
+        function registerFailure() {
 
-        function validateLoginInput(
-            username,
-            password
-        ) {
+            attempts++;
 
-            if (!username) {
+            if (attempts >= MAX_ATTEMPTS) {
 
-                return {
+                attempts = 0;
 
-                    valid: false,
+                lockedUntil =
+                    Date.now() + LOCK_TIME;
 
-                    message:
-                        "Username দিন।"
-
-                };
-
-            }
-
-
-            if (!password) {
-
-                return {
-
-                    valid: false,
-
-                    message:
-                        "Password দিন।"
-
-                };
-
-            }
-
-
-            if (
-                username.length >
-                100
-            ) {
-
-                return {
-
-                    valid: false,
-
-                    message:
-                        "Username সঠিক নয়।"
-
-                };
-
-            }
-
-
-            if (
-                password.length >
-                200
-            ) {
-
-                return {
-
-                    valid: false,
-
-                    message:
-                        "Password সঠিক নয়।"
-
-                };
-
-            }
-
-
-            return {
-
-                valid: true,
-
-                message: ""
-
-            };
-
-        }
-
-
-        /* ==================================================
-           LOGIN LOCK
-        ================================================== */
-
-        function isLoginLocked() {
-
-            return (
-                Date.now() <
-                loginLockedUntil
-            );
-
-        }
-
-
-        function registerLoginFailure() {
-
-            loginAttempts++;
-
-
-            if (
-                loginAttempts >=
-                DALIMGARI_LOGIN_MAX_ATTEMPTS
-            ) {
-
-                loginLockedUntil =
-                    Date.now() +
-                    DALIMGARI_LOGIN_LOCK_TIME;
-
-
-                loginAttempts = 0;
-
-
-                showLoginMessage(
+                showMessage(
                     "অনেকবার ভুল Login হয়েছে। ৩০ সেকেন্ড পরে আবার চেষ্টা করুন।",
                     "error"
                 );
-
 
                 return;
 
             }
 
-
-            showLoginMessage(
+            showMessage(
                 "Username অথবা Password সঠিক নয়।",
                 "error"
             );
@@ -471,155 +207,28 @@
         }
 
 
-        function resetLoginAttempts() {
+        function resetAttempts() {
 
-            loginAttempts = 0;
+            attempts = 0;
 
-            loginLockedUntil = 0;
-
-        }
-
-
-        /* ==================================================
-           GET AUTH USER PROFILE
-        ================================================== */
-
-        async function getUserProfile(
-            userId
-        ) {
-
-            const supabase =
-                getSupabaseClient();
-
-
-            const {
-                data,
-                error
-            } = await supabase
-
-                .from("profiles")
-
-                .select(
-                    "id, role, enabled"
-                )
-
-                .eq(
-                    "id",
-                    userId
-                )
-
-                .maybeSingle();
-
-
-            if (error) {
-
-                throw error;
-
-            }
-
-
-            if (!data) {
-
-                return null;
-
-            }
-
-
-            /*
-             * Only these roles are allowed
-             * to access the admin area.
-             */
-
-            if (
-                data.role !== "admin" &&
-                data.role !== "manager"
-            ) {
-
-                return null;
-
-            }
-
-
-            /*
-             * Disabled users cannot login.
-             */
-
-            if (
-                data.enabled !== true
-            ) {
-
-                return null;
-
-            }
-
-
-            return data;
+            lockedUntil = 0;
 
         }
 
 
-        /* ==================================================
-           CHECK EXISTING SUPABASE SESSION
-        ================================================== */
-
-        async function checkExistingSession() {
-
-            const supabase =
-                getSupabaseClient();
-
-
-            const {
-                data,
-                error
-            } = await supabase
-                .auth
-                .getSession();
-
-
-            if (error) {
-
-                console.error(
-                    "Supabase session check failed:",
-                    error
-                );
-
-                return null;
-
-            }
-
-
-            return (
-                data &&
-                data.session
-                    ? data.session
-                    : null
-            );
-
-        }
-
-
-        /* ==================================================
-           LOGIN
-        ================================================== */
-
-        async function handleLogin(
-            event
-        ) {
+        async function login(event) {
 
             event.preventDefault();
 
-
-            if (loginProcessing) {
-
+            if (processing) {
                 return;
-
             }
 
 
-            if (isLoginLocked()) {
+            if (isLocked()) {
 
-                showLoginMessage(
-                    "অনেকবার ভুল Login হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।",
+                showMessage(
+                    "কিছুক্ষণ পরে আবার চেষ্টা করুন।",
                     "error"
                 );
 
@@ -630,36 +239,20 @@
 
             const username =
                 String(
-                    usernameInput?.value || ""
-                ).trim();
+                    usernameInput.value || ""
+                ).trim().toLowerCase();
 
-
-            /*
-             * Password trim করা হচ্ছে না।
-             *
-             * কারণ password-এর শুরু/শেষের
-             * space valid হতে পারে।
-             */
 
             const password =
                 String(
-                    passwordInput?.value || ""
+                    passwordInput.value || ""
                 );
 
 
-            const validation =
-                validateLoginInput(
-                    username,
-                    password
-                );
+            if (!username) {
 
-
-            if (
-                !validation.valid
-            ) {
-
-                showLoginMessage(
-                    validation.message,
+                showMessage(
+                    "Username দিন।",
                     "error"
                 );
 
@@ -668,15 +261,12 @@
             }
 
 
-            const email =
-                getAuthenticationEmail(
-                    username
+            if (!password) {
+
+                showMessage(
+                    "Password দিন।",
+                    "error"
                 );
-
-
-            if (!email) {
-
-                registerLoginFailure();
 
                 return;
 
@@ -685,150 +275,135 @@
 
             try {
 
-                loginProcessing = true;
+                processing = true;
 
+                setLoading(true);
 
-                setLoginLoading(
-                    true
-                );
-
-
-                showLoginMessage(
-                    "",
-                    "info"
-                );
+                showMessage("");
 
 
                 const supabase =
-                    getSupabaseClient();
+                    window.DalimgariSupabase;
 
 
-                /* ==========================================
-                   SUPABASE AUTHENTICATION
-                =========================================== */
+                if (
+                    !supabase ||
+                    !supabase.rpc
+                ) {
+
+                    throw new Error(
+                        "Supabase client পাওয়া যায়নি।"
+                    );
+
+                }
+
 
                 const {
                     data,
                     error
-                } = await supabase
-                    .auth
-                    .signInWithPassword({
+                } = await supabase.rpc(
+                    "dalimgari_login",
+                    {
+                        p_username:
+                            username,
 
-                        email:
-                            email,
-
-                        password:
+                        p_password:
                             password
+                    }
+                );
 
-                    });
+
+                console.log(
+                    "Dalimgari login result:",
+                    data,
+                    error
+                );
 
 
-                /*
-                 * Authentication failed
-                 */
+                if (error) {
+
+                    console.error(
+                        "Login RPC error:",
+                        error
+                    );
+
+                    throw error;
+
+                }
+
 
                 if (
-    error ||
-    !data ||
-    !data.user
-) {
+                    !data ||
+                    !data.length
+                ) {
 
-    console.error(
-        "Supabase Login Error:",
-        error
-    );
+                    registerFailure();
 
-    registerLoginFailure();
-
-    showLoginMessage(
-        error?.message ||
-        "Supabase authentication failed.",
-        "error"
-    );
-
-    if (passwordInput) {
-        passwordInput.value = "";
-    }
-
-    return;
-}
-
-
-                /* ==========================================
-                   SERVER-SIDE ROLE CHECK
-                =========================================== */
-
-                const profile =
-                    await getUserProfile(
-                        data.user.id
-                    );
-
-
-                /*
-                 * Auth successful হলেও
-                 * profile না থাকলে access denied.
-                 */
-
-                if (!profile) {
-
-                    await supabase
-                        .auth
-                        .signOut();
-
-
-                    showLoginMessage(
-                        "আপনার account-এর অনুমতি পাওয়া যায়নি।",
-                        "error"
-                    );
-
-
-                    if (
-                        passwordInput
-                    ) {
-
-                        passwordInput.value =
-                            "";
-
-                    }
-
+                    passwordInput.value = "";
 
                     return;
 
                 }
 
 
-                /* ==========================================
-                   SUCCESS
-                =========================================== */
-
-                resetLoginAttempts();
+                const user =
+                    data[0];
 
 
-                showLoginMessage(
+                const role =
+                    String(
+                        user.role || ""
+                    ).toLowerCase();
+
+
+                if (
+                    role !== "admin" &&
+                    role !== "manager"
+                ) {
+
+                    registerFailure();
+
+                    passwordInput.value = "";
+
+                    return;
+
+                }
+
+
+                /*
+                 * Temporary application session.
+                 *
+                 * এটি password সংরক্ষণ করে না।
+                 */
+
+                sessionStorage.setItem(
+                    "dalimgariUser",
+                    JSON.stringify({
+                        username:
+                            user.username,
+
+                        role:
+                            role,
+
+                        loginAt:
+                            new Date().toISOString(),
+
+                        sessionVersion:
+                            "temporary-v1"
+                    })
+                );
+
+
+                resetAttempts();
+
+
+                showMessage(
                     "Login সফল হয়েছে।",
                     "success"
                 );
 
 
-                /*
-                 * এখানে কোনো:
-                 *
-                 * sessionStorage
-                 * localStorage
-                 * fake session
-                 * password storage
-                 *
-                 * করা হচ্ছে না।
-                 *
-                 * Supabase Auth session-ই
-                 * authentication-এর source of truth.
-                 */
-
-
-                if (
-                    profile.role ===
-                    "admin"
-                ) {
+                if (role === "admin") {
 
                     window.location.replace(
                         "admin-dashboard.html"
@@ -839,10 +414,7 @@
                 }
 
 
-                if (
-                    profile.role ===
-                    "manager"
-                ) {
+                if (role === "manager") {
 
                     window.location.replace(
                         "manager-dashboard.html"
@@ -853,198 +425,57 @@
                 }
 
 
-                /*
-                 * Safety fallback
-                 */
-
-                await supabase
-                    .auth
-                    .signOut();
-
-
-                showLoginMessage(
-                    "অনুমোদিত role পাওয়া যায়নি।",
-                    "error"
-                );
-
-
             } catch (error) {
 
                 console.error(
-                    "Login process failed:",
+                    "Dalimgari Login Error:",
                     error
                 );
 
 
-                showLoginMessage(
+                showMessage(
                     "Login সিস্টেমে সমস্যা হয়েছে। আবার চেষ্টা করুন।",
                     "error"
                 );
 
-
             } finally {
 
-                loginProcessing =
-                    false;
+                processing = false;
 
-
-                setLoginLoading(
-                    false
-                );
+                setLoading(false);
 
             }
 
         }
 
 
-        /* ==================================================
-           INPUT EVENTS
-        ================================================== */
-
-        if (
-            usernameInput
-        ) {
-
-            usernameInput.addEventListener(
-                "input",
-                function() {
-
-                    showLoginMessage(
-                        "",
-                        "info"
-                    );
-
-                }
-            );
-
-        }
+        form.addEventListener(
+            "submit",
+            login
+        );
 
 
-        if (
-            passwordInput
-        ) {
-
-            passwordInput.addEventListener(
-                "input",
-                function() {
-
-                    showLoginMessage(
-                        "",
-                        "info"
-                    );
-
-                }
-            );
-
-        }
+        usernameInput.addEventListener(
+            "input",
+            function () {
+                showMessage("");
+            }
+        );
 
 
-        /* ==================================================
-           FORM SUBMIT
-        ================================================== */
+        passwordInput.addEventListener(
+            "input",
+            function () {
+                showMessage("");
+            }
+        );
 
-        if (
-            loginForm
-        ) {
-
-            loginForm.addEventListener(
-                "submit",
-                handleLogin
-            );
-
-        }
-
-
-        /* ==================================================
-           PAGE INITIALIZATION
-        ================================================== */
 
         document.addEventListener(
             "DOMContentLoaded",
-            async function() {
+            function () {
 
-                try {
-
-                    /*
-                     * Supabase client-এর
-                     * অস্তিত্ব যাচাই
-                     */
-
-                    getSupabaseClient();
-
-
-                    /*
-                     * Existing Auth session
-                     * শুধু যাচাই করছি।
-                     *
-                     * Login page থেকে automatic
-                     * redirect করছি না।
-                     */
-
-                    await checkExistingSession();
-
-
-                    /*
-                     * Username focus
-                     */
-
-                    if (
-                        usernameInput
-                    ) {
-
-                        usernameInput.focus();
-
-                    }
-
-                } catch (error) {
-
-                    console.error(
-                        "Login page initialization failed:",
-                        error
-                    );
-
-
-                    showLoginMessage(
-                        "Login system প্রস্তুত করা যায়নি।",
-                        "error"
-                    );
-
-                }
-
-            }
-        );
-
-
-        /* ==================================================
-           GLOBAL ERROR
-        ================================================== */
-
-        window.addEventListener(
-            "error",
-            function(event) {
-
-                console.error(
-                    "Dalimgari Login Error:",
-                    event.error ||
-                    event.message
-                );
-
-            }
-        );
-
-
-        /* ==================================================
-           UNHANDLED PROMISE ERROR
-        ================================================== */
-
-        window.addEventListener(
-            "unhandledrejection",
-            function(event) {
-
-                console.error(
-                    "Dalimgari Login Promise Error:",
-                    event.reason
-                );
+                usernameInput.focus();
 
             }
         );
