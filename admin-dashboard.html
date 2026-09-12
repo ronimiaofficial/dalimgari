@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="bn">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Dalimgari Admin Dashboard"
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
+    <title>Admin Dashboard | Dalimgari</title>
+
+    <link
+        rel="stylesheet"
+        href="admin-dashboard.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- ==================================================
+         DASHBOARD HEADER
+    =================================================== -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                Admin Dashboard
+            </h1>
+
+            <p>
+                Website Management
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="logoutButton"
+            class="logout-button"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+    <!-- ==================================================
+         GLOBAL DASHBOARD STATUS
+    =================================================== -->
+
+    <div
+        id="dashboardStatus"
+        class="dashboard-status"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+
+    <!-- ==================================================
+         DASHBOARD NAVIGATION
+    =================================================== -->
+
+    <nav
+        class="admin-navigation"
+        aria-label="Admin Dashboard Navigation"
+    >
+
+        <a
+            href="#website"
+            data-tab="website"
+            class="admin-nav-link active"
+            aria-current="page"
+        >
+            Website Information
+        </a>
+
+
+        <a
+            href="#admin"
+            data-tab="admin"
+            class="admin-nav-link"
+        >
+            Admin Profile
+        </a>
+
+
+        <a
+            href="#manager"
+            data-tab="manager"
+            class="admin-nav-link"
+        >
+            Manager Profile
+        </a>
+
+    </nav>
+
+
+    <!-- ==================================================
+         MAIN DASHBOARD
+    =================================================== -->
+
+    <main class="dashboard-container">
+
+
+        <!-- ==================================================
+             WEBSITE INFORMATION
+        =================================================== -->
+
+        <section
+            id="websiteTab"
+            class="dashboard-tab-content active"
+            data-tab-content="website"
+        >
+
+            <h2>
+                Website Information
+            </h2>
+
+
+            <p class="section-description">
+                এখান থেকে মূল ওয়েবসাইটের তথ্য, যোগাযোগের লিংক এবং Footer তথ্য পরিচালনা করুন।
+            </p>
+
+
+            <!-- ----------------------------------------------
+                 BASIC INFORMATION
+            ----------------------------------------------- -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Basic Information
+                </h3>
+
+
+                <label for="siteName">
+                    Website Name
+                </label>
+
+                <input
+                    type="text"
+                    id="siteName"
+                    autocomplete="off"
+                    maxlength="200"
+                    placeholder="যেমন: Dalimgari | ডালিমগাড়ী"
+                >
+
+
+                <label for="tagline">
+                    Tagline
+                </label>
+
+                <input
+                    type="text"
+                    id="tagline"
+                    autocomplete="off"
+                    maxlength="300"
+                    placeholder="ওয়েবসাইটের সংক্ষিপ্ত বক্তব্য"
+                >
+
+
+                <label for="villageName">
+                    Village Name
+                </label>
+
+                <input
+                    type="text"
+                    id="villageName"
+                    autocomplete="off"
+                    maxlength="150"
+                    placeholder="গ্রামের নাম"
+                >
+
+
+                <label for="villageDescription">
+                    Short Description
+                </label>
+
+                <textarea
+                    id="villageDescription"
+                    rows="4"
+                    maxlength="5000"
+                    placeholder="গ্রাম সম্পর্কে সংক্ষিপ্ত বিবরণ"
+                ></textarea>
+
+
+                <label for="detailedDescription">
+                    Detailed Description
+                </label>
+
+                <textarea
+                    id="detailedDescription"
+                    rows="7"
+                    maxlength="15000"
+                    placeholder="গ্রাম সম্পর্কে বিস্তারিত বিবরণ"
+                ></textarea>
+
+
+                <label for="location">
+                    Location
+                </label>
+
+                <textarea
+                    id="location"
+                    rows="4"
+                    maxlength="5000"
+                    placeholder="গ্রামের অবস্থান ও ঠিকানা"
+                ></textarea>
+
+
+                <label for="history">
+                    History
+                </label>
+
+                <textarea
+                    id="history"
+                    rows="6"
+                    maxlength="15000"
+                    placeholder="গ্রামের ইতিহাস"
+                ></textarea>
+
+
+                <label for="nature">
+                    Nature
+                </label>
+
+                <textarea
+                    id="nature"
+                    rows="6"
+                    maxlength="15000"
+                    placeholder="গ্রামের প্রকৃতি ও পরিবেশ"
+                ></textarea>
+
+            </div>
+
+
+            <!-- ----------------------------------------------
+                 WEBSITE CONTACT
+            ----------------------------------------------- -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Website Contact Information
+                </h3>
+
+
+                <p class="section-description">
+                    Contact Page-এ দেখানোর জন্য ওয়েবসাইটের ই-মেইল ও বিস্তারিত যোগাযোগের তথ্য এখানে দিন।
+                </p>
+
+
+                <label for="contact">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="contact"
+                    autocomplete="email"
+                    maxlength="320"
+                    placeholder="যেমন: example@gmail.com"
+                >
+
+
+                <label for="contactDetails">
+                    Detailed Contact Information
+                </label>
+
+                <textarea
+                    id="contactDetails"
+                    rows="6"
+                    maxlength="10000"
+                    placeholder="ঠিকানা, ফোন নম্বর, যোগাযোগের সময় বা অন্যান্য তথ্য"
+                ></textarea>
+
+            </div>
+
+
+            <!-- ----------------------------------------------
+                 WEBSITE CONTACT LINKS
+            ----------------------------------------------- -->
+
+            <div class="dashboard-card link-management">
+
+                <h3>
+                    Website Contact Links
+                </h3>
+
+
+                <p class="section-description">
+                    Facebook, YouTube, WhatsApp ও TikTok-এর লিংক যোগ করুন।
+                    আইকন URL-এর domain থেকে স্বয়ংক্রিয়ভাবে নির্ধারিত হবে।
+                </p>
+
+
+                <div
+                    id="websiteContactLinks"
+                    class="links-list"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="link-editor-box">
+
+                    <h4>
+                        নতুন Contact Link যোগ করুন
+                    </h4>
+
+
+                    <label for="newWebsiteLinkName">
+                        Link Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="newWebsiteLinkName"
+                        autocomplete="off"
+                        maxlength="100"
+                        placeholder="যেমন: Facebook"
+                    >
+
+
+                    <label for="newWebsiteLinkUrl">
+                        Link URL
+                    </label>
+
+                    <input
+                        type="url"
+                        id="newWebsiteLinkUrl"
+                        autocomplete="url"
+                        maxlength="1000"
+                        placeholder="https://facebook.com/yourpage"
+                    >
+
+
+                    <button
+                        type="button"
+                        id="addWebsiteLinkButton"
+                        class="add-link-button"
+                    >
+                        + Add Link
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ----------------------------------------------
+                 FOOTER
+            ----------------------------------------------- -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Footer Information
+                </h3>
+
+
+                <label for="footerText">
+                    Footer Text
+                </label>
+
+                <textarea
+                    id="footerText"
+                    rows="3"
+                    maxlength="5000"
+                    placeholder="Footer-এ যে অতিরিক্ত তথ্য দেখাতে চান"
+                ></textarea>
+
+
+                <label for="copyrightText">
+                    Copyright
+                </label>
+
+                <input
+                    type="text"
+                    id="copyrightText"
+                    autocomplete="off"
+                    maxlength="500"
+                    placeholder="যেমন: © 2026 Dalimgari"
+                >
+
+
+                <label for="managementText">
+                    Website Management Information
+                </label>
+
+                <textarea
+                    id="managementText"
+                    rows="3"
+                    maxlength="5000"
+                    placeholder="ওয়েবসাইট কে পরিচালনা বা সংরক্ষণ করে সে সম্পর্কিত তথ্য"
+                ></textarea>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="saveWebsiteButton"
+                class="save-button"
+            >
+                Save Website Information
+            </button>
+
+        </section>
+
+
+        <!-- ==================================================
+             ADMIN PROFILE
+        =================================================== -->
+
+        <section
+            id="adminTab"
+            class="dashboard-tab-content"
+            data-tab-content="admin"
+        >
+
+            <h2>
+                Admin Profile
+            </h2>
+
+
+            <p class="section-description">
+                Admin-এর পরিচয়, যোগাযোগ এবং Login তথ্য পরিচালনা করুন।
+            </p>
+
+
+            <div class="dashboard-card">
+
+                <label for="adminName">
+                    Name
+                </label>
+
+                <input
+                    type="text"
+                    id="adminName"
+                    autocomplete="name"
+                    maxlength="150"
+                    placeholder="Admin-এর নাম"
+                >
+
+
+                <label for="adminPhoto">
+                    Photo
+                </label>
+
+                <input
+                    type="text"
+                    id="adminPhoto"
+                    autocomplete="off"
+                    maxlength="1000"
+                    placeholder="images/admin.jpg"
+                >
+
+
+                <label for="adminDescription">
+                    Description
+                </label>
+
+                <textarea
+                    id="adminDescription"
+                    rows="4"
+                    maxlength="5000"
+                    placeholder="Admin সম্পর্কে সংক্ষিপ্ত তথ্য"
+                ></textarea>
+
+
+                <label for="adminContact">
+                    Contact
+                </label>
+
+                <textarea
+                    id="adminContact"
+                    rows="3"
+                    maxlength="5000"
+                    placeholder="Admin-এর যোগাযোগের তথ্য"
+                ></textarea>
+
+            </div>
+
+
+            <!-- ----------------------------------------------
+                 ADMIN CONTACT LINKS
+            ----------------------------------------------- -->
+
+            <div class="dashboard-card link-management">
+
+                <h3>
+                    Admin Contact Links
+                </h3>
+
+
+                <div
+                    id="adminContactLinks"
+                    class="links-list"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="link-editor-box">
+
+                    <h4>
+                        নতুন Admin Link যোগ করুন
+                    </h4>
+
+
+                    <label for="newAdminLinkName">
+                        Link Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="newAdminLinkName"
+                        autocomplete="off"
+                        maxlength="100"
+                        placeholder="যেমন: Facebook"
+                    >
+
+
+                    <label for="newAdminLinkUrl">
+                        Link URL
+                    </label>
+
+                    <input
+                        type="url"
+                        id="newAdminLinkUrl"
+                        autocomplete="url"
+                        maxlength="1000"
+                        placeholder="https://facebook.com/..."
+                    >
+
+
+                    <button
+                        type="button"
+                        id="addAdminLinkButton"
+                        class="add-link-button"
+                    >
+                        + Add Link
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ----------------------------------------------
+                 ADMIN LOGIN
+            ----------------------------------------------- -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Admin Login
+                </h3>
+
+
+                <label for="adminUsername">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="adminUsername"
+                    autocomplete="username"
+                    maxlength="100"
+                    placeholder="Admin username"
+                >
+
+
+                <label for="adminPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="adminPassword"
+                    autocomplete="new-password"
+                    maxlength="200"
+                    placeholder="Admin password"
+                >
+
+            </div>
+
+
+            <button
+                type="button"
+                id="saveAdminButton"
+                class="save-button"
+            >
+                Save Admin Profile
+            </button>
+
+        </section>
+
+
+        <!-- ==================================================
+             MANAGER PROFILE
+        =================================================== -->
+
+        <section
+            id="managerTab"
+            class="dashboard-tab-content"
+            data-tab-content="manager"
+        >
+
+            <h2>
+                Manager Profile
+            </h2>
+
+
+            <p class="section-description">
+                Manager-এর পরিচয়, যোগাযোগ, Login এবং Permission পরিচালনা করুন।
+            </p>
+
+
+            <div class="dashboard-card">
+
+                <label for="managerName">
+                    Name
+                </label>
+
+                <input
+                    type="text"
+                    id="managerName"
+                    autocomplete="name"
+                    maxlength="150"
+                    placeholder="Manager-এর নাম"
+                >
+
+
+                <label for="managerPhoto">
+                    Photo
+                </label>
+
+                <input
+                    type="text"
+                    id="managerPhoto"
+                    autocomplete="off"
+                    maxlength="1000"
+                    placeholder="images/manager.jpg"
+                >
+
+
+                <label for="managerDescription">
+                    Description
+                </label>
+
+                <textarea
+                    id="managerDescription"
+                    rows="4"
+                    maxlength="5000"
+                    placeholder="Manager সম্পর্কে সংক্ষিপ্ত তথ্য"
+                ></textarea>
+
+
+                <label for="managerContact">
+                    Contact
+                </label>
+
+                <textarea
+                    id="managerContact"
+                    rows="3"
+                    maxlength="5000"
+                    placeholder="Manager-এর যোগাযোগের তথ্য"
+                ></textarea>
+
+            </div>
+
+
+            <!-- ----------------------------------------------
+                 MANAGER CONTACT LINKS
+            ----------------------------------------------- -->
+
+            <div class="dashboard-card link-management">
+
+                <h3>
+                    Manager Contact Links
+                </h3>
+
+
+                <div
+                    id="managerContactLinks"
+                    class="links-list"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="link-editor-box">
+
+                    <h4>
+                        নতুন Manager Link যোগ করুন
+                    </h4>
+
+
+                    <label for="newManagerLinkName">
+                        Link Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="newManagerLinkName"
+                        autocomplete="off"
+                        maxlength="100"
+                        placeholder="যেমন: WhatsApp"
+                    >
+
+
+                    <label for="newManagerLinkUrl">
+                        Link URL
+                    </label>
+
+                    <input
+                        type="url"
+                        id="newManagerLinkUrl"
+                        autocomplete="url"
+                        maxlength="1000"
+                        placeholder="https://wa.me/..."
+                    >
+
+
+                    <button
+                        type="button"
+                        id="addManagerLinkButton"
+                        class="add-link-button"
+                    >
+                        + Add Link
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ----------------------------------------------
+                 MANAGER LOGIN
+            ----------------------------------------------- -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Manager Login
+                </h3>
+
+
+                <label for="managerUsername">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="managerUsername"
+                    autocomplete="username"
+                    maxlength="100"
+                    placeholder="Manager username"
+                >
+
+
+                <label for="managerPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="managerPassword"
+                    autocomplete="new-password"
+                    maxlength="200"
+                    placeholder="Manager password"
+                >
+
+            </div>
+
+
+            <!-- ----------------------------------------------
+                 MANAGER PERMISSIONS
+            ----------------------------------------------- -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Manager Permissions
+                </h3>
+
+
+                <label class="permission-item">
+
+                    <input
+                        type="checkbox"
+                        id="managerCanEditVillageInfo"
+                    >
+
+                    <span>
+                        Village Information
+                    </span>
+
+                </label>
+
+
+                <label class="permission-item">
+
+                    <input
+                        type="checkbox"
+                        id="managerCanManagePeople"
+                    >
+
+                    <span>
+                        People Management
+                    </span>
+
+                </label>
+
+
+                <label class="permission-item">
+
+                    <input
+                        type="checkbox"
+                        id="managerCanManageImages"
+                    >
+
+                    <span>
+                        Image Management
+                    </span>
+
+                </label>
+
+
+                <label class="permission-item">
+
+                    <input
+                        type="checkbox"
+                        id="managerCanManageVideos"
+                    >
+
+                    <span>
+                        Video Management
+                    </span>
+
+                </label>
+
+
+                <label class="permission-item">
+
+                    <input
+                        type="checkbox"
+                        id="managerCanManageAudio"
+                    >
+
+                    <span>
+                        Audio Management
+                    </span>
+
+                </label>
+
+
+                <label class="permission-item">
+
+                    <input
+                        type="checkbox"
+                        id="managerCanManageEvents"
+                    >
+
+                    <span>
+                        Event Management
+                    </span>
+
+                </label>
+
+
+                <label class="permission-item disabled-permission">
+
+                    <input
+                        type="checkbox"
+                        id="managerCanEditManagerProfile"
+                        disabled
+                    >
+
+                    <span>
+                        Manager Profile
+                    </span>
+
+                </label>
+
+
+                <label class="permission-item disabled-permission">
+
+                    <input
+                        type="checkbox"
+                        id="managerCanEditSecurity"
+                        disabled
+                    >
+
+                    <span>
+                        Security Settings
+                    </span>
+
+                </label>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="saveManagerButton"
+                class="save-button"
+            >
+                Save Manager Profile
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================================================
+         DATA / ICON / APPLICATION LAYERS
+    =================================================== -->
+
+    <script src="data-manager.js"></script>
+
+    <script src="icon-manager.js"></script>
+
+    <script src="admin-dashboard.js"></script>
+
+</body>
+
+</html>

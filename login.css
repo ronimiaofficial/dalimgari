@@ -1,0 +1,527 @@
+/* ==================================================
+   ডালিমগাড়ী — Login Page UI v2
+   শুধু login.html-এর জন্য
+   ================================================== */
+
+
+/* ==================================================
+   GLOBAL
+================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html {
+    min-height: 100%;
+}
+
+
+body {
+    min-height: 100vh;
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        "Noto Sans Bengali",
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef3e9 0%,
+            #e4eee2 100%
+        );
+
+    color: #214936;
+
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/* ==================================================
+   LOGIN CONTAINER
+================================================== */
+
+.login-container {
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        30px 20px;
+}
+
+
+/* ==================================================
+   LOGIN BOX
+================================================== */
+
+.login-box {
+    width: 100%;
+
+    max-width: 430px;
+
+    padding: 36px;
+
+    background: #ffffff;
+
+    border:
+        1px solid
+        rgba(33, 73, 54, 0.08);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 15px 40px
+        rgba(35, 70, 48, 0.15);
+}
+
+
+/* ==================================================
+   TITLE
+================================================== */
+
+.login-box h1 {
+    margin:
+        0 0 10px;
+
+    text-align: center;
+
+    color: #214936;
+
+    font-size: 30px;
+
+    line-height: 1.2;
+
+    font-weight: 700;
+}
+
+
+/* ==================================================
+   DESCRIPTION
+================================================== */
+
+.login-box > p {
+    margin:
+        0 0 28px;
+
+    text-align: center;
+
+    color: #66756b;
+
+    font-size: 15px;
+
+    line-height: 1.6;
+}
+
+
+/* ==================================================
+   FORM
+================================================== */
+
+#loginForm {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+
+/* ==================================================
+   LABEL
+================================================== */
+
+#loginForm label {
+    margin-top: 7px;
+
+    color: #214936;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+
+/* ==================================================
+   INPUT
+================================================== */
+
+#loginForm input {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding:
+        12px 14px;
+
+    border:
+        1px solid
+        #cbd8cc;
+
+    border-radius: 9px;
+
+    background: #fbfdf9;
+
+    color: #213b2b;
+
+    font-family: inherit;
+
+    font-size: 16px;
+
+    line-height: 1.4;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+/* ==================================================
+   INPUT PLACEHOLDER
+================================================== */
+
+#loginForm input::placeholder {
+    color: #8a978e;
+
+    opacity: 1;
+}
+
+
+/* ==================================================
+   INPUT FOCUS
+================================================== */
+
+#loginForm input:focus {
+    border-color: #6d9277;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(109, 146, 119, 0.16);
+}
+
+
+/* ==================================================
+   INVALID INPUT
+================================================== */
+
+#loginForm input:invalid:not(:placeholder-shown) {
+    border-color: #c98b82;
+}
+
+
+/* ==================================================
+   LOGIN BUTTON
+================================================== */
+
+.login-button {
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 14px;
+
+    padding:
+        13px 16px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #214936;
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.1s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* ==================================================
+   BUTTON HOVER
+================================================== */
+
+.login-button:hover:not(:disabled) {
+    background: #315c3a;
+
+    box-shadow:
+        0 5px 14px
+        rgba(33, 73, 54, 0.18);
+}
+
+
+/* ==================================================
+   BUTTON ACTIVE
+================================================== */
+
+.login-button:active:not(:disabled) {
+    transform:
+        translateY(1px);
+}
+
+
+/* ==================================================
+   BUTTON FOCUS
+================================================== */
+
+.login-button:focus-visible {
+    outline:
+        3px solid
+        rgba(109, 146, 119, 0.35);
+
+    outline-offset: 2px;
+}
+
+
+/* ==================================================
+   BUTTON DISABLED / LOADING
+================================================== */
+
+.login-button:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+}
+
+
+/* ==================================================
+   LOGIN MESSAGE
+================================================== */
+
+.login-message {
+    min-height: 24px;
+
+    margin:
+        16px 0 0;
+
+    text-align: center;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    line-height: 1.6;
+}
+
+
+/* ==================================================
+   MESSAGE TYPES
+================================================== */
+
+.login-message[data-type="error"] {
+    color: #9a3d32;
+}
+
+
+.login-message[data-type="success"] {
+    color: #2f6843;
+}
+
+
+.login-message[data-type="info"] {
+    color: #66756b;
+}
+
+
+/* ==================================================
+   BACK TO WEBSITE
+================================================== */
+
+.back-to-website {
+    margin-top: 22px;
+
+    padding-top: 18px;
+
+    border-top:
+        1px solid
+        #e4ebe4;
+
+    text-align: center;
+}
+
+
+.back-to-website a {
+    display: inline-block;
+
+    color: #315c3a;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    line-height: 1.5;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.back-to-website a:hover {
+    color: #214936;
+
+    text-decoration: underline;
+}
+
+
+.back-to-website a:focus-visible {
+    outline:
+        2px solid
+        #6d9277;
+
+    outline-offset: 3px;
+
+    border-radius: 3px;
+}
+
+
+/* ==================================================
+   REDUCED MOTION
+================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        scroll-behavior: auto !important;
+
+        transition: none !important;
+
+        animation: none !important;
+
+    }
+
+}
+
+
+/* ==================================================
+   TABLET
+================================================== */
+
+@media (max-width: 600px) {
+
+    .login-container {
+        align-items: flex-start;
+
+        padding:
+            35px 16px;
+    }
+
+
+    .login-box {
+        max-width: 100%;
+
+        padding: 28px 22px;
+
+        border-radius: 15px;
+    }
+
+
+    .login-box h1 {
+        font-size: 27px;
+    }
+
+}
+
+
+/* ==================================================
+   SMALL MOBILE
+================================================== */
+
+@media (max-width: 380px) {
+
+    .login-container {
+        padding:
+            24px 12px;
+    }
+
+
+    .login-box {
+        padding:
+            24px 18px;
+
+        border-radius: 13px;
+    }
+
+
+    .login-box h1 {
+        font-size: 25px;
+    }
+
+
+    .login-box > p {
+        font-size: 14px;
+
+        margin-bottom: 22px;
+    }
+
+
+    #loginForm input {
+        min-height: 46px;
+
+        font-size: 16px;
+    }
+
+
+    .login-button {
+        min-height: 48px;
+    }
+
+}
+
+
+/* ==================================================
+   HIGH CONTRAST SUPPORT
+================================================== */
+
+@media (forced-colors: active) {
+
+    .login-box {
+        border:
+            1px solid
+            CanvasText;
+
+        box-shadow: none;
+    }
+
+
+    #loginForm input,
+    .login-button {
+        border:
+            1px solid
+            CanvasText;
+    }
+
+}

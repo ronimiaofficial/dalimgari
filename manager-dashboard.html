@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <meta
+      name="description"
+      content="Dalimgari Manager Dashboard"
+    />
+
+    <title>Manager Dashboard | Dalimgari</title>
+
+    <link
+      rel="stylesheet"
+      href="admin-dashboard.css"
+    />
+  </head>
+
+  <body>
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="dashboard-header">
+      <div>
+        <h1>Manager Dashboard</h1>
+        <p>Website Content Management</p>
+      </div>
+
+      <button
+        id="logoutButton"
+        class="logout-button"
+        type="button"
+        data-lock-during-loading="false"
+      >
+        Logout
+      </button>
+    </header>
+
+
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <nav
+      class="admin-navigation manager-navigation"
+      aria-label="Manager Dashboard Navigation"
+    >
+      <a
+        href="#village"
+        data-tab="village"
+        class="admin-nav-link active"
+      >
+        Village Information
+      </a>
+
+      <a
+        href="#people"
+        data-tab="people"
+        class="admin-nav-link"
+      >
+        People
+      </a>
+
+      <a
+        href="#images"
+        data-tab="images"
+        class="admin-nav-link"
+      >
+        Images
+      </a>
+
+      <a
+        href="#videos"
+        data-tab="videos"
+        class="admin-nav-link"
+      >
+        Videos
+      </a>
+
+      <a
+        href="#audio"
+        data-tab="audio"
+        class="admin-nav-link"
+      >
+        Audio
+      </a>
+
+      <a
+        href="#events"
+        data-tab="events"
+        class="admin-nav-link"
+      >
+        Events
+      </a>
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="dashboard-container">
+
+
+      <!-- ===================================================
+           VILLAGE INFORMATION
+      ==================================================== -->
+
+      <section
+        id="villageTab"
+        class="dashboard-tab-content active"
+      >
+        <h2>Village Information</h2>
+
+        <p class="section-description">
+          Admin যে অনুমতি দিয়েছে তার ভিত্তিতে গ্রামের তথ্য
+          পরিচালনা করুন।
+        </p>
+
+
+        <div class="dashboard-card">
+
+          <h3>Basic Information</h3>
+
+          <label for="villageName">
+            Village Name
+          </label>
+
+          <input
+            type="text"
+            id="villageName"
+            placeholder="গ্রামের নাম"
+          />
+
+
+          <label for="villageDescription">
+            Short Description
+          </label>
+
+          <textarea
+            id="villageDescription"
+            rows="5"
+            placeholder="গ্রাম সম্পর্কে সংক্ষিপ্ত বিবরণ"
+          ></textarea>
+
+
+          <label for="detailedDescription">
+            Detailed Description
+          </label>
+
+          <textarea
+            id="detailedDescription"
+            rows="8"
+            placeholder="গ্রাম সম্পর্কে বিস্তারিত বিবরণ"
+          ></textarea>
+
+
+          <label for="location">
+            Location
+          </label>
+
+          <textarea
+            id="location"
+            rows="5"
+            placeholder="গ্রামের অবস্থান ও ঠিকানা"
+          ></textarea>
+
+
+          <label for="history">
+            History
+          </label>
+
+          <textarea
+            id="history"
+            rows="7"
+            placeholder="গ্রামের ইতিহাস"
+          ></textarea>
+
+
+          <label for="nature">
+            Nature
+          </label>
+
+          <textarea
+            id="nature"
+            rows="7"
+            placeholder="গ্রামের প্রকৃতি ও পরিবেশ"
+          ></textarea>
+
+        </div>
+
+
+        <button
+          type="button"
+          id="saveVillageButton"
+          class="save-button"
+        >
+          Save Village Information
+        </button>
+
+      </section>
+
+
+      <!-- ===================================================
+           PEOPLE
+      ==================================================== -->
+
+      <section
+        id="peopleTab"
+        class="dashboard-tab-content"
+      >
+        <h2>People Management</h2>
+
+        <p class="section-description">
+          গ্রামের মানুষের তথ্য, পরিচয় ও ছবি পরিচালনা করুন।
+        </p>
+
+
+        <div class="dashboard-card">
+
+          <h3>Add Person</h3>
+
+          <label for="personName">
+            Name
+          </label>
+
+          <input
+            type="text"
+            id="personName"
+            placeholder="ব্যক্তির নাম"
+          />
+
+
+          <label for="personDescription">
+            Description
+          </label>
+
+          <textarea
+            id="personDescription"
+            rows="5"
+            placeholder="ব্যক্তি সম্পর্কে তথ্য"
+          ></textarea>
+
+
+          <label for="personPhoto">
+            Photo
+          </label>
+
+          <input
+            type="text"
+            id="personPhoto"
+            placeholder="images/people/example.jpg"
+          />
+
+
+          <button
+            type="button"
+            id="addPersonButton"
+            class="save-button"
+          >
+            + Add Person
+          </button>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+          <h3>People List</h3>
+
+          <div
+            id="peopleList"
+            class="management-list"
+          >
+            <p class="empty-state">
+              কোনো তথ্য যোগ করা হয়নি।
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           IMAGES
+      ==================================================== -->
+
+      <section
+        id="imagesTab"
+        class="dashboard-tab-content"
+      >
+        <h2>Image Management</h2>
+
+        <p class="section-description">
+          গ্রামের প্রকৃতি, মানুষ এবং বিভিন্ন ছবির তথ্য পরিচালনা করুন।
+        </p>
+
+
+        <div class="dashboard-card">
+
+          <h3>Add Image</h3>
+
+          <label for="imageTitle">
+            Image Title
+          </label>
+
+          <input
+            type="text"
+            id="imageTitle"
+            placeholder="ছবির নাম"
+          />
+
+
+          <label for="imageDescription">
+            Description
+          </label>
+
+          <textarea
+            id="imageDescription"
+            rows="4"
+            placeholder="ছবির সংক্ষিপ্ত বিবরণ"
+          ></textarea>
+
+
+          <label for="imagePath">
+            Image Path
+          </label>
+
+          <input
+            type="text"
+            id="imagePath"
+            placeholder="images/example.jpg"
+          />
+
+
+          <button
+            type="button"
+            id="addImageButton"
+            class="save-button"
+          >
+            + Add Image
+          </button>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+          <h3>Image List</h3>
+
+          <div
+            id="imageList"
+            class="management-list"
+          >
+            <p class="empty-state">
+              কোনো তথ্য যোগ করা হয়নি।
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           VIDEOS
+      ==================================================== -->
+
+      <section
+        id="videosTab"
+        class="dashboard-tab-content"
+      >
+        <h2>Video Management</h2>
+
+        <p class="section-description">
+          গ্রামের ভিডিও সংরক্ষণ ও পরিচালনা করুন।
+        </p>
+
+
+        <div class="dashboard-card">
+
+          <h3>Add Video</h3>
+
+          <label for="videoTitle">
+            Video Title
+          </label>
+
+          <input
+            type="text"
+            id="videoTitle"
+            placeholder="ভিডিওর নাম"
+          />
+
+
+          <label for="videoDescription">
+            Description
+          </label>
+
+          <textarea
+            id="videoDescription"
+            rows="4"
+            placeholder="ভিডিও সম্পর্কে তথ্য"
+          ></textarea>
+
+
+          <label for="videoPath">
+            Video Path
+          </label>
+
+          <input
+            type="text"
+            id="videoPath"
+            placeholder="videos/example.mp4"
+          />
+
+
+          <button
+            type="button"
+            id="addVideoButton"
+            class="save-button"
+          >
+            + Add Video
+          </button>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+          <h3>Video List</h3>
+
+          <div
+            id="videoList"
+            class="management-list"
+          >
+            <p class="empty-state">
+              কোনো তথ্য যোগ করা হয়নি।
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           AUDIO
+      ==================================================== -->
+
+      <section
+        id="audioTab"
+        class="dashboard-tab-content"
+      >
+        <h2>Audio Management</h2>
+
+        <p class="section-description">
+          গ্রামের অডিও ও কণ্ঠভিত্তিক তথ্য পরিচালনা করুন।
+        </p>
+
+
+        <div class="dashboard-card">
+
+          <h3>Add Audio</h3>
+
+          <label for="audioTitle">
+            Audio Title
+          </label>
+
+          <input
+            type="text"
+            id="audioTitle"
+            placeholder="অডিওর নাম"
+          />
+
+
+          <label for="audioDescription">
+            Description
+          </label>
+
+          <textarea
+            id="audioDescription"
+            rows="4"
+            placeholder="অডিও সম্পর্কে তথ্য"
+          ></textarea>
+
+
+          <label for="audioPath">
+            Audio Path
+          </label>
+
+          <input
+            type="text"
+            id="audioPath"
+            placeholder="audio/example.mp3"
+          />
+
+
+          <button
+            type="button"
+            id="addAudioButton"
+            class="save-button"
+          >
+            + Add Audio
+          </button>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+          <h3>Audio List</h3>
+
+          <div
+            id="audioList"
+            class="management-list"
+          >
+            <p class="empty-state">
+              কোনো তথ্য যোগ করা হয়নি।
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           EVENTS
+      ==================================================== -->
+
+      <section
+        id="eventsTab"
+        class="dashboard-tab-content"
+      >
+        <h2>Event Management</h2>
+
+        <p class="section-description">
+          গ্রামের বিভিন্ন অনুষ্ঠান, ঘটনা ও গুরুত্বপূর্ণ সময়ের তথ্য পরিচালনা করুন।
+        </p>
+
+
+        <div class="dashboard-card">
+
+          <h3>Add Event</h3>
+
+          <label for="eventTitle">
+            Event Title
+          </label>
+
+          <input
+            type="text"
+            id="eventTitle"
+            placeholder="অনুষ্ঠান বা ঘটনার নাম"
+          />
+
+
+          <label for="eventDate">
+            Event Date
+          </label>
+
+          <input
+            type="date"
+            id="eventDate"
+          />
+
+
+          <label for="eventDescription">
+            Description
+          </label>
+
+          <textarea
+            id="eventDescription"
+            rows="6"
+            placeholder="অনুষ্ঠান বা ঘটনার বিবরণ"
+          ></textarea>
+
+
+          <label for="eventImage">
+            Image Path
+          </label>
+
+          <input
+            type="text"
+            id="eventImage"
+            placeholder="images/events/example.jpg"
+          />
+
+
+          <button
+            type="button"
+            id="addEventButton"
+            class="save-button"
+          >
+            + Add Event
+          </button>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+          <h3>Event List</h3>
+
+          <div
+            id="eventList"
+            class="management-list"
+          >
+            <p class="empty-state">
+              কোনো তথ্য যোগ করা হয়নি।
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         SCRIPTS
+    ====================================================== -->
+
+    <script src="data-manager.js"></script>
+
+    <script src="icon-manager.js"></script>
+
+    <script src="manager-dashboard.js"></script>
+
+  </body>
+</html>

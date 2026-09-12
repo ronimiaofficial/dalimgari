@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="bn">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dalimgari</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- Sidebar Button -->
+
+    <button
+        id="sidebarOpenButton"
+        class="sidebar-open-button"
+        aria-label="Sidebar খুলুন"
+    >
+        ☰
+    </button>
+
+
+
+    <!-- Sidebar -->
+
+    <aside
+        id="sidebar"
+        class="sidebar"
+    >
+
+        <button
+            id="sidebarCloseButton"
+            class="sidebar-close-button"
+            aria-label="Sidebar বন্ধ করুন"
+        >
+            ×
+        </button>
+
+
+        <!-- Admin Profile -->
+
+        <div
+            id="adminProfile"
+            class="sidebar-profile"
+        >
+
+            <img
+                id="adminPhoto"
+                src=""
+                alt=""
+            >
+
+            <h3 id="adminName"></h3>
+
+            <p id="adminDescription"></p>
+
+            <p id="adminContact"></p>
+
+            <div
+                id="adminContactLinks"
+                class="profile-contact-links"
+            ></div>
+
+        </div>
+
+
+
+        <!-- Manager Profile -->
+
+        <div
+            id="managerProfile"
+            class="sidebar-profile"
+        >
+
+            <img
+                id="managerPhoto"
+                src=""
+                alt=""
+            >
+
+            <h3 id="managerName"></h3>
+
+            <p id="managerDescription"></p>
+
+            <p id="managerContact"></p>
+
+            <div
+                id="managerContactLinks"
+                class="profile-contact-links"
+            ></div>
+
+        </div>
+
+
+
+        <!-- Login -->
+
+        <a
+            href="login.html"
+            class="sidebar-login-button"
+        >
+            Login
+        </a>
+
+    </aside>
+
+
+
+    <!-- Sidebar Overlay -->
+
+    <div
+        id="sidebarOverlay"
+        class="sidebar-overlay"
+    ></div>
+
+
+
+    <!-- Header -->
+
+    <header class="hero">
+
+        <img
+            id="headerImage"
+            src=""
+            alt=""
+        >
+
+        <div class="hero-overlay"></div>
+
+
+        <div class="site-logo">
+
+            <img
+                id="siteLogo"
+                src=""
+                alt=""
+            >
+
+        </div>
+
+
+        <div class="hero-content">
+
+            <h1 id="siteName"></h1>
+
+            <p id="siteTagline"></p>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- Navigation -->
+
+    <nav>
+
+        <a
+            href="#home"
+            data-page="home"
+        >
+            মূলপাতা
+        </a>
+
+
+        <a
+            href="#about"
+            data-page="about"
+        >
+            ডালিমগাড়ী সম্পর্কে
+        </a>
+
+
+        <a
+            href="#contact"
+            data-page="contact"
+        >
+            যোগাযোগ
+        </a>
+
+    </nav>
+
+
+
+    <!-- Main Content -->
+
+    <main id="pageContent"></main>
+
+
+
+    <!-- Footer -->
+
+    <footer>
+
+    <!-- প্রথমে Contact Icons -->
+
+    <div
+        id="footerContactLinks"
+        class="footer-contact-links"
+    ></div>
+
+
+    <!-- এরপর Copyright -->
+
+    <p id="copyrightText"></p>
+
+
+    <!-- এরপর Website Management Information -->
+
+    <p id="managementText"></p>
+
+</footer>
+
+
+
+    <!-- Data Layer -->
+
+    <script src="data-manager.js"></script>
+
+
+    <!-- Local Icon Manager -->
+
+    <script src="icon-manager.js"></script>
+
+
+    <!-- Main JavaScript -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>

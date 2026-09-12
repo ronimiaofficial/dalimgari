@@ -1,0 +1,832 @@
+/* =========================================================
+   Dalimgari Dashboard UI
+   Admin + Manager Dashboard
+========================================================= */
+
+:root {
+  --primary: #2f6b3f;
+  --primary-dark: #245331;
+  --secondary: #6f8f4e;
+  --background: #f4f7f1;
+  --surface: #ffffff;
+  --border: #d9e1d5;
+  --text: #1f2a21;
+  --muted: #667267;
+  --danger: #b42318;
+  --shadow: 0 8px 24px rgba(30, 55, 35, 0.08);
+  --radius: 14px;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dashboard-header {
+  min-height: 88px;
+  padding: 18px 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary-dark),
+      var(--primary)
+    );
+
+  color: #ffffff;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+.dashboard-header p {
+  margin: 5px 0 0;
+  opacity: 0.9;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.logout-button {
+  border: 0;
+  border-radius: 10px;
+
+  padding: 10px 18px;
+
+  background: #ffffff;
+  color: var(--primary-dark);
+
+  font-weight: 700;
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.logout-button:hover {
+  transform: translateY(-1px);
+}
+
+.logout-button:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.admin-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  display: flex;
+  gap: 4px;
+
+  overflow-x: auto;
+
+  padding: 8px 12px;
+
+  background: var(--surface);
+
+  border-bottom: 1px solid var(--border);
+
+  box-shadow: 0 3px 12px rgba(20, 40, 25, 0.05);
+}
+
+.admin-nav-link {
+  position: relative;
+
+  flex: 0 0 auto;
+
+  padding: 10px 15px;
+
+  border-radius: 9px;
+
+  color: var(--muted);
+
+  text-decoration: none;
+
+  font-weight: 650;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.admin-nav-link:hover {
+  background: #eef4eb;
+  color: var(--primary-dark);
+}
+
+.admin-nav-link.active {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.admin-nav-link.has-unsaved-changes::after {
+  content: "";
+
+  position: absolute;
+
+  top: 5px;
+  right: 5px;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #d97706;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.dashboard-container {
+  width: min(1100px, calc(100% - 32px));
+
+  margin: 28px auto 50px;
+}
+
+
+/* =========================================================
+   TAB CONTENT
+========================================================= */
+
+.dashboard-tab-content {
+  display: none;
+}
+
+.dashboard-tab-content.active {
+  display: block;
+}
+
+.dashboard-tab-content h2 {
+  margin: 0 0 6px;
+
+  color: var(--primary-dark);
+
+  font-size: 1.6rem;
+}
+
+.section-description {
+  margin: 0 0 22px;
+
+  color: var(--muted);
+
+  font-size: 0.95rem;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.dashboard-card {
+  margin-bottom: 20px;
+  padding: 22px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
+}
+
+.dashboard-card h3 {
+  margin: 0 0 16px;
+
+  color: var(--primary-dark);
+
+  font-size: 1.15rem;
+}
+
+.dashboard-card h4 {
+  margin: 0 0 12px;
+
+  color: var(--text);
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.dashboard-card label {
+  display: block;
+
+  margin: 14px 0 6px;
+
+  font-weight: 650;
+
+  color: var(--text);
+}
+
+.dashboard-card input,
+.dashboard-card textarea,
+.dashboard-card select {
+  width: 100%;
+
+  padding: 11px 13px;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: var(--text);
+
+  font: inherit;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dashboard-card textarea {
+  min-height: 90px;
+
+  resize: vertical;
+}
+
+.dashboard-card input:focus,
+.dashboard-card textarea:focus,
+.dashboard-card select:focus {
+  outline: none;
+
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 3px rgba(47, 107, 63, 0.12);
+}
+
+.dashboard-card input:invalid:not(:placeholder-shown) {
+  border-color: #d92d20;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+.save-button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+
+  padding: 11px 20px;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: var(--primary);
+
+  color: #ffffff;
+
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.save-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.save-button:focus-visible {
+  outline: 3px solid rgba(47, 107, 63, 0.25);
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   LINK MANAGEMENT
+========================================================= */
+
+.link-management {
+  overflow: hidden;
+}
+
+.link-editor-box {
+  margin-top: 20px;
+  padding: 18px;
+
+  background: #f7faf5;
+
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+
+.add-link-button {
+  margin-top: 14px;
+
+  padding: 10px 16px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: var(--secondary);
+
+  color: #ffffff;
+
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.add-link-button:hover {
+  background: var(--primary-dark);
+}
+
+.links-list {
+  display: grid;
+  gap: 10px;
+}
+
+.links-empty,
+.empty-state {
+  margin: 0;
+
+  padding: 18px;
+
+  border-radius: 10px;
+
+  background: #f7f8f6;
+
+  color: var(--muted);
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   MANAGED LINKS
+========================================================= */
+
+.managed-link-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 12px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 10px;
+
+  background: #ffffff;
+}
+
+.managed-link-icon {
+  width: 34px;
+  height: 34px;
+
+  flex: 0 0 34px;
+
+  object-fit: contain;
+}
+
+.managed-link-info {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.managed-link-info strong {
+  display: block;
+
+  margin-bottom: 2px;
+}
+
+.managed-link-info span {
+  display: block;
+
+  overflow: hidden;
+
+  color: var(--muted);
+
+  font-size: 0.85rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.managed-link-actions {
+  display: flex;
+
+  gap: 7px;
+
+  flex: 0 0 auto;
+}
+
+.managed-link-actions button {
+  padding: 7px 11px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: var(--text);
+
+  cursor: pointer;
+}
+
+.managed-link-actions button:hover {
+  background: #eef4eb;
+}
+
+.managed-link-actions button:last-child {
+  color: var(--danger);
+}
+
+
+/* =========================================================
+   PERMISSIONS
+========================================================= */
+
+.permission-item {
+  display: flex !important;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin: 10px 0 !important;
+
+  padding: 10px 12px;
+
+  border-radius: 9px;
+
+  background: #f7faf5;
+
+  cursor: pointer;
+}
+
+.permission-item input {
+  width: 18px !important;
+  height: 18px;
+
+  accent-color: var(--primary);
+}
+
+.disabled-permission {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MANAGEMENT LIST
+========================================================= */
+
+.management-list {
+  display: grid;
+
+  gap: 12px;
+}
+
+.management-item {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 15px;
+
+  background: #ffffff;
+
+  border: 1px solid var(--border);
+
+  border-radius: 11px;
+}
+
+.management-item-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.management-item-content strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: var(--primary-dark);
+
+  font-size: 1rem;
+}
+
+.management-item-content p {
+  margin: 4px 0;
+
+  color: var(--muted);
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.management-item-content small {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #7b857d;
+
+  overflow-wrap: anywhere;
+}
+
+.management-item-actions {
+  flex: 0 0 auto;
+}
+
+.management-item-actions button {
+  padding: 8px 12px;
+
+  border: 1px solid #e0b8b5;
+  border-radius: 8px;
+
+  background: #fffafa;
+
+  color: var(--danger);
+
+  font: inherit;
+  font-weight: 650;
+
+  cursor: pointer;
+}
+
+.management-item-actions button:hover {
+  background: #fff0ee;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.dashboard-loading {
+  cursor: wait;
+}
+
+.dashboard-loading .dashboard-container {
+  opacity: 0.75;
+}
+
+.dashboard-loading-message {
+  position: fixed;
+
+  left: 50%;
+  bottom: 22px;
+
+  z-index: 100;
+
+  transform: translateX(-50%);
+
+  padding: 10px 16px;
+
+  border-radius: 10px;
+
+  background: var(--primary-dark);
+
+  color: #ffffff;
+
+  box-shadow: var(--shadow);
+
+  font-size: 0.9rem;
+}
+
+
+/* =========================================================
+   BUTTON DISABLED
+========================================================= */
+
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 760px) {
+
+  .dashboard-header {
+    min-height: auto;
+
+    padding: 16px;
+
+    align-items: flex-start;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.85rem;
+  }
+
+  .logout-button {
+    padding: 9px 13px;
+  }
+
+  .admin-navigation {
+    padding: 7px;
+  }
+
+  .admin-nav-link {
+    padding: 9px 12px;
+
+    font-size: 0.9rem;
+  }
+
+  .dashboard-container {
+    width: min(
+      100% - 20px,
+      1100px
+    );
+
+    margin-top: 18px;
+  }
+
+  .dashboard-card {
+    padding: 17px;
+  }
+
+  .dashboard-tab-content h2 {
+    font-size: 1.35rem;
+  }
+
+  .managed-link-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .managed-link-info {
+    width: calc(100% - 50px);
+  }
+
+  .managed-link-actions {
+    width: 100%;
+  }
+
+  .managed-link-actions button {
+    flex: 1;
+  }
+
+  .management-item {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .management-item-actions {
+    width: 100%;
+  }
+
+  .management-item-actions button {
+    width: 100%;
+  }
+
+  .save-button {
+    width: 100%;
+  }
+
+  .add-link-button {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+
+  .dashboard-header {
+    flex-direction: column;
+  }
+
+  .logout-button {
+    width: 100%;
+  }
+
+  .dashboard-card {
+    padding: 14px;
+  }
+
+  .dashboard-card input,
+  .dashboard-card textarea,
+  .dashboard-card select {
+    padding: 10px;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+
+/* =========================================================
+   HIGH CONTRAST / FORCED COLORS
+========================================================= */
+
+@media (forced-colors: active) {
+
+  .admin-nav-link.active,
+  .save-button,
+  .add-link-button {
+    border: 1px solid ButtonText;
+  }
+
+  .dashboard-card,
+  .managed-link-item,
+  .management-item {
+    border: 1px solid CanvasText;
+  }
+}
